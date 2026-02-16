@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>DocForge CLI | Automated PDF Release Notes</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2690d",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#0d0a08",
+                        "card-dark": "#1a120b",
+                        "border-dark": "#342318",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .grid-pattern {
+            background-image: radial-gradient(circle at 2px 2px, rgba(242, 105, 13, 0.05) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+        .glow-hover:hover {
+            box-shadow: 0 0 20px rgba(242, 105, 13, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 selection:bg-primary selection:text-white">
+
+<!-- Top Navigation -->
+<nav class="sticky top-0 z-50 border-b border-border-dark bg-background-dark/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="size-8 bg-primary rounded-lg flex items-center justify-center">
+                <span class="material-symbols-outlined text-white">description</span>
+            </div>
+            <span class="text-xl font-bold tracking-tight">DocForge <span class="text-primary">CLI</span></span>
+        </div>
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+            <a class="hover:text-primary transition-colors" href="#features">Features</a>
+            <a class="hover:text-primary transition-colors" href="#architecture">Architecture</a>
+            <a class="hover:text-primary transition-colors" href="#quickstart">Quick Start</a>
+            <a class="hover:text-primary transition-colors" href="https://github.com/YOUR_USERNAME/docforge">Docs</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <a class="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-border-dark hover:bg-white/10 transition-all" href="https://github.com/YOUR_USERNAME/docforge">
+                <span class="material-symbols-outlined text-sm">terminal</span>
+                <span class="text-sm font-semibold">GitHub</span>
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="relative pt-20 pb-32 overflow-hidden grid-pattern">
+    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/10 blur-[120px] rounded-full pointer-events-none"></div>
+    <div class="max-w-7xl mx-auto px-6 text-center">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest mb-6">
+            <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+            </span>
+            Now Powered by Foxit APIs
+        </div>
+        <h1 class="text-5xl md:text-7xl font-black tracking-tight leading-[1.1] mb-6">
+            Release Notes PDFs from <br/>
+            <span class="text-primary">GitHub-style</span> JSON
+        </h1>
+        <p class="max-w-2xl mx-auto text-lg text-slate-400 mb-10 leading-relaxed">
+            Automated documentation for engineering teams. Transform raw JSON data
+            into stakeholder-ready PDF documents using industry-standard Foxit PDF generation.
+        </p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+            <a href="#quickstart" class="px-8 py-4 bg-primary text-white font-bold rounded-lg glow-hover transition-all flex items-center gap-2">
+                Get Started <span class="material-symbols-outlined">arrow_forward</span>
+            </a>
+            <a href="#demo" class="px-8 py-4 bg-white/5 border border-border-dark text-white font-bold rounded-lg hover:bg-white/10 transition-all flex items-center gap-2">
+                View Demo <span class="material-symbols-outlined">play_circle</span>
+            </a>
+        </div>
+
+        <!-- Terminal Component -->
+        <div class="max-w-3xl mx-auto rounded-xl border border-border-dark bg-card-dark shadow-2xl overflow-hidden">
+            <div class="flex items-center justify-between px-4 py-3 bg-border-dark/50 border-b border-border-dark">
+                <div class="flex gap-2">
+                    <div class="size-3 rounded-full bg-red-500/50"></div>
+                    <div class="size-3 rounded-full bg-yellow-500/50"></div>
+                    <div class="size-3 rounded-full bg-green-500/50"></div>
+                </div>
+                <span class="text-xs font-mono text-slate-500">bash — docforge cli</span>
+            </div>
+            <div class="p-6 text-left font-mono text-sm leading-relaxed whitespace-pre overflow-x-auto bg-black/40">
+<div class="flex gap-4">
+<span class="text-primary">$</span>
+<span class="text-slate-300">npm install  <span class="text-slate-500"># in cli/ directory</span></span>
+</div>
+<div class="flex gap-4 mt-2">
+<span class="text-primary">$</span>
+<span class="text-slate-300">npm link</span>
+</div>
+<div class="flex gap-4 mt-4">
+<span class="text-primary">$</span>
+<span class="text-slate-300">docforge generate ./release.json --out v2.4.0-notes.pdf</span>
+</div>
+<div class="mt-4 text-green-400">
+  ✓ Release data parsed successfully
+  ✓ Connected to Foxit Document Generation API
+  ✓ Watermark applied (INTERNAL)
+  ✓ PDF flattened and secured
+  ✓ Success: ./v2.4.0-notes.pdf [37.6 KB]</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Problem/Solution -->
+<section class="py-24 border-y border-border-dark bg-card-dark/30">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid md:grid-cols-2 gap-16 items-center">
+            <div>
+                <h2 class="text-3xl font-bold mb-6">Stop Manual Formatting</h2>
+                <p class="text-slate-400 mb-8 leading-relaxed">
+                    Manually drafting release notes is a bottleneck. Copy-pasting GitHub JSON
+                    into Word or Google Docs leads to inconsistent layouts, broken links, and
+                    wasted engineering hours.
+                </p>
+                <div class="space-y-4">
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-red-500 bg-red-500/10 p-1 rounded">close</span>
+                        <div>
+                            <h4 class="font-bold text-slate-200">The Painful Way</h4>
+                            <p class="text-sm text-slate-500">Manual layouts, PDF export errors, and design inconsistencies.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-green-500 bg-green-500/10 p-1 rounded">check</span>
+                        <div>
+                            <h4 class="font-bold text-slate-200">The DocForge Way</h4>
+                            <p class="text-sm text-slate-500">Automated mapping, industrial Foxit PDF engine, and CI/CD ready.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="relative group">
+                <div class="absolute inset-0 bg-primary/20 rounded-xl blur-xl group-hover:bg-primary/30 transition-all"></div>
+                <div class="relative bg-card-dark border border-border-dark p-8 rounded-xl shadow-xl">
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="text-xs font-bold text-primary uppercase tracking-widest">Automation Score</span>
+                        <span class="text-2xl font-bold">98%</span>
+                    </div>
+                    <div class="h-2 w-full bg-border-dark rounded-full overflow-hidden mb-8">
+                        <div class="h-full bg-primary w-[98%] rounded-full"></div>
+                    </div>
+                    <p class="text-sm text-slate-400 italic">"DocForge saved our DevOps team 4 hours per release cycle by automating the PDF generation directly from our GitHub Actions."</p>
+                    <div class="mt-6 flex items-center gap-3">
+                        <div class="size-10 rounded-full bg-slate-800"></div>
+                        <div>
+                            <p class="text-sm font-bold">Sarah Chen</p>
+                            <p class="text-xs text-slate-500">Sr. DevOps Engineer, TechFlow</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Architecture Section -->
+<section class="py-24" id="architecture">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+        <h2 class="text-3xl font-bold mb-4">Architecture Flow</h2>
+        <p class="text-slate-400 mb-16 max-w-xl mx-auto">How your data flows from command line to a professional PDF.</p>
+        <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-0">
+            <div class="flex flex-col items-center max-w-[240px]">
+                <div class="size-20 rounded-2xl bg-white/5 border border-border-dark flex items-center justify-center mb-6">
+                    <span class="material-symbols-outlined text-3xl text-primary">terminal</span>
+                </div>
+                <h3 class="font-bold mb-2">CLI / CI Input</h3>
+                <p class="text-sm text-slate-500">Node-based CLI parses your GitHub release JSON.</p>
+            </div>
+            <div class="hidden md:block w-24 h-px bg-gradient-to-r from-border-dark to-primary"></div>
+            <div class="flex flex-col items-center max-w-[240px]">
+                <div class="size-20 rounded-2xl bg-white/5 border border-border-dark flex items-center justify-center mb-6 ring-2 ring-primary ring-offset-4 ring-offset-background-dark">
+                    <span class="material-symbols-outlined text-3xl text-primary">hub</span>
+                </div>
+                <h3 class="font-bold mb-2">Mapping Engine</h3>
+                <p class="text-sm text-slate-500">Data is injected into Word templates for Foxit processing.</p>
+            </div>
+            <div class="hidden md:block w-24 h-px bg-gradient-to-r from-primary to-border-dark"></div>
+            <div class="flex flex-col items-center max-w-[240px]">
+                <div class="size-20 rounded-2xl bg-white/5 border border-border-dark flex items-center justify-center mb-6">
+                    <span class="material-symbols-outlined text-3xl text-primary">picture_as_pdf</span>
+                </div>
+                <h3 class="font-bold mb-2">Foxit PDF APIs</h3>
+                <p class="text-sm text-slate-500">High-fidelity rendering, watermarking, and file security.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features / APIs -->
+<section class="py-24 bg-card-dark/30 border-y border-border-dark" id="features">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold mb-4">Powered by Foxit Technology</h2>
+            <p class="text-slate-400">Industry-leading PDF services under the hood.</p>
+        </div>
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="p-8 rounded-xl bg-card-dark border border-border-dark hover:border-primary/50 transition-all group">
+                <span class="material-symbols-outlined text-4xl text-primary mb-6 group-hover:scale-110 transition-transform">article</span>
+                <h3 class="text-xl font-bold mb-4">Foxit Document Generation API</h3>
+                <p class="text-slate-400 leading-relaxed">
+                    Merges your release data into professional, pre-designed templates.
+                    Supports complex tables, dynamic branding, and automatic table of
+                    contents creation.
+                </p>
+            </div>
+            <div class="p-8 rounded-xl bg-card-dark border border-border-dark hover:border-primary/50 transition-all group">
+                <span class="material-symbols-outlined text-4xl text-primary mb-6 group-hover:scale-110 transition-transform">cloud_sync</span>
+                <h3 class="text-xl font-bold mb-4">Foxit PDF Services API</h3>
+                <p class="text-slate-400 leading-relaxed">
+                    Advanced PDF manipulation including OCR for attachments, file
+                    compression, and standard-compliant archival formatting (PDF/A).
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Code Example -->
+<section class="py-24" id="demo">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+                <h2 class="text-3xl font-bold mb-6">GitHub Standard JSON</h2>
+                <p class="text-slate-400 mb-8 leading-relaxed">
+                    No custom schemas needed. DocForge works natively with the standard
+                    GitHub Release API output. Simply point the CLI to your JSON export.
+                </p>
+                <ul class="space-y-4">
+                    <li class="flex items-center gap-3 text-slate-300 font-medium">
+                        <span class="material-symbols-outlined text-primary">check_circle</span>
+                        Automatic Markdown parsing in body
+                    </li>
+                    <li class="flex items-center gap-3 text-slate-300 font-medium">
+                        <span class="material-symbols-outlined text-primary">check_circle</span>
+                        Contributor list extraction
+                    </li>
+                    <li class="flex items-center gap-3 text-slate-300 font-medium">
+                        <span class="material-symbols-outlined text-primary">check_circle</span>
+                        Asset download link integration
+                    </li>
+                </ul>
+            </div>
+            <div class="rounded-xl border border-border-dark bg-[#0a0a0a] overflow-hidden shadow-2xl">
+                <div class="px-4 py-2 bg-white/5 border-b border-border-dark flex items-center justify-between">
+                    <span class="text-xs font-mono text-slate-400">release.json</span>
+                    <div class="flex gap-1.5">
+                        <div class="size-2 bg-slate-700 rounded-full"></div>
+                        <div class="size-2 bg-slate-700 rounded-full"></div>
+                    </div>
+                </div>
+                <div class="p-6 font-mono text-xs leading-relaxed overflow-x-auto text-slate-300">
+<span class="text-primary">{</span><br/>
+  <span class="text-blue-400">"product_name"</span>: <span class="text-green-400">"Acme Platform"</span>,<br/>
+  <span class="text-blue-400">"version"</span>: <span class="text-green-400">"2.4.0"</span>,<br/>
+  <span class="text-blue-400">"summary"</span>: <span class="text-green-400">"Real-time collaboration engine..."</span>,<br/>
+  <span class="text-blue-400">"features"</span>: <span class="text-primary">[</span><br/>
+    <span class="text-primary">{</span> <span class="text-blue-400">"title"</span>: <span class="text-green-400">"Live Editing"</span>, ... <span class="text-primary">}</span><br/>
+  <span class="text-primary">]</span>,<br/>
+  <span class="text-blue-400">"breaking_changes"</span>: <span class="text-primary">[</span><br/>
+    <span class="text-primary">{</span> <span class="text-blue-400">"title"</span>: <span class="text-green-400">"Removed /v1/users"</span>, ... <span class="text-primary">}</span><br/>
+  <span class="text-primary">]</span><br/>
+<span class="text-primary">}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Start -->
+<section class="py-24 bg-primary text-white" id="quickstart">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-black mb-4">Quick Start Guide</h2>
+            <p class="text-white/80">Get your first PDF in under 2 minutes.</p>
+        </div>
+        <div class="grid md:grid-cols-4 gap-8">
+            <div class="flex flex-col items-center text-center">
+                <div class="size-12 rounded-full bg-white text-primary flex items-center justify-center text-xl font-bold mb-6">1</div>
+                <h4 class="font-bold mb-2">Install</h4>
+                <p class="text-sm text-white/70"><code>cd cli && npm install</code></p>
+            </div>
+            <div class="flex flex-col items-center text-center">
+                <div class="size-12 rounded-full bg-white text-primary flex items-center justify-center text-xl font-bold mb-6">2</div>
+                <h4 class="font-bold mb-2">Config</h4>
+                <p class="text-sm text-white/70">Set your Foxit credentials in <code>backend/.env</code></p>
+            </div>
+            <div class="flex flex-col items-center text-center">
+                <div class="size-12 rounded-full bg-white text-primary flex items-center justify-center text-xl font-bold mb-6">3</div>
+                <h4 class="font-bold mb-2">Start</h4>
+                <p class="text-sm text-white/70"><code>pip install -r requirements.txt && uvicorn app.main:app</code></p>
+            </div>
+            <div class="flex flex-col items-center text-center">
+                <div class="size-12 rounded-full bg-white text-primary flex items-center justify-center text-xl font-bold mb-6">4</div>
+                <h4 class="font-bold mb-2">Build</h4>
+                <p class="text-sm text-white/70"><code>docforge generate ./release.json --out notes.pdf</code></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="py-16 border-t border-border-dark">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-12 mb-12">
+            <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="size-6 bg-primary rounded flex items-center justify-center">
+                        <span class="material-symbols-outlined text-white text-xs">description</span>
+                    </div>
+                    <span class="font-bold tracking-tight">DocForge</span>
+                </div>
+                <p class="text-sm text-slate-500 leading-relaxed">
+                    The ultimate CLI for automated release
+                    documentation. Built for developers by developers.
+                </p>
+            </div>
+            <div>
+                <h4 class="font-bold mb-6 text-sm uppercase tracking-widest text-slate-400">Product</h4>
+                <ul class="space-y-4 text-sm text-slate-500">
+                    <li><a class="hover:text-primary transition-colors" href="#features">Features</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#architecture">Integrations</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Enterprise</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Pricing</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold mb-6 text-sm uppercase tracking-widest text-slate-400">Resources</h4>
+                <ul class="space-y-4 text-sm text-slate-500">
+                    <li><a class="hover:text-primary transition-colors" href="https://github.com/YOUR_USERNAME/docforge">Documentation</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="https://developer-api.foxit.com">API Reference</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Guides</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="#">Support</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold mb-6 text-sm uppercase tracking-widest text-slate-400">Partners</h4>
+                <ul class="space-y-4 text-sm text-slate-500">
+                    <li><a class="hover:text-primary transition-colors" href="https://foxit.com">Foxit</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="https://github.com">GitHub</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="pt-8 border-t border-border-dark flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-600">
+            <p>&copy; 2026 DocForge CLI. All rights reserved.</p>
+            <div class="flex gap-8">
+                <a class="hover:text-slate-400" href="#">Privacy Policy</a>
+                <a class="hover:text-slate-400" href="#">Terms of Service</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
