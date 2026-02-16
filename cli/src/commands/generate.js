@@ -5,11 +5,11 @@
  *   docforge generate <input.json> --out output.pdf [--watermark DRAFT] [--password secret]
  */
 
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve, basename } from "node:path";
 import chalk from "chalk";
 import ora from "ora";
-import { generatePDF } from "../lib/apiClient.js";
+import { generatePDF, healthCheck } from "../lib/apiClient.js";
 
 /**
  * Register the `generate` command on a Commander program.
@@ -19,13 +19,18 @@ export function registerGenerateCommand(program) {
     .command("generate")
     .description("Generate a Release Notes PDF from a JSON file")
     .argument("<input>", "Path to the release JSON file")
-    .option("-o, --out <path>", "Output PDF path", "release-notes.pdf")
+    .option("-o, --out <path>", "Output PDF path (default: <product>-<version>-release-notes.pdf)")
     .option("-w, --watermark <text>", "Watermark text", "INTERNAL")
     .option("-p, --password <pwd>", "Password-protect the PDF")
     .option("-t, --template <id>", "Template ID", "release-notes-v1")
     .action(async (input, opts) => {
       const inputPath = resolve(input);
-      const outputPath = resolve(opts.out);
+
+      // --- Check file exists ---
+      if (!existsSync(inputPath)) {
+        console.error(chalk.red(`\n  File not found: ${inputPath}\n`));
+        process.exit(1);
+      }
 
       // --- Read & parse JSON ---
       let releaseData;
@@ -41,41 +46,62 @@ export function registerGenerateCommand(program) {
       }
 
       // --- Quick local validation ---
-      if (!releaseData.product_name) {
+      const missing = [];
+      if (!releaseData.product_name) missing.push("product_name");
+      if (!releaseData.version) missing.push("version");
+      if (missing.length) {
         console.error(
-          chalk.red("\n  Missing required field: product_name")
+          chalk.red(`\n  Missing required field(s): ${missing.join(", ")}`)
+        );
+        console.error(
+          chalk.gray("  See examples/release.json for the expected format.\n")
         );
         process.exit(1);
       }
-      if (!releaseData.version) {
-        console.error(chalk.red("\n  Missing required field: version"));
-        process.exit(1);
-      }
 
-      // --- Call backend ---
+      // --- Derive smart default output path ---
+      const slug = releaseData.product_name.toLowerCase().replace(/\s+/g, "-");
+      const defaultOut = `${slug}-v${releaseData.version}-release-notes.pdf`;
+      const outputPath = resolve(opts.out || defaultOut);
+
+      const productLabel = `${releaseData.product_name} v${releaseData.version}`;
+
+      // --- Print header ---
       console.log();
       console.log(
         chalk.bold("  DocForge CLI"),
         chalk.gray("— Release Notes Generator")
       );
       console.log(
-        chalk.gray(`  Input:     ${inputPath}`)
+        chalk.bold("  Product: "),
+        chalk.white(productLabel)
       );
-      console.log(
-        chalk.gray(`  Output:    ${outputPath}`)
-      );
-      console.log(
-        chalk.gray(`  Watermark: ${opts.watermark}`)
-      );
+      console.log(chalk.gray(`  Input:     ${inputPath}`));
+      console.log(chalk.gray(`  Output:    ${outputPath}`));
+      console.log(chalk.gray(`  Watermark: ${opts.watermark}`));
       if (opts.password) {
-        console.log(chalk.gray(`  Password:  ****`));
+        console.log(chalk.gray("  Password:  ****"));
       }
       console.log();
 
+      // --- Health-check the backend first ---
       const spinner = ora({
-        text: "Generating PDF via Foxit APIs...",
+        text: "Connecting to DocForge backend...",
         color: "cyan",
       }).start();
+
+      const healthy = await healthCheck();
+      if (!healthy) {
+        spinner.fail(chalk.red("Could not reach the DocForge backend."));
+        console.error();
+        console.error(
+          chalk.gray("  Make sure it is running:\n") +
+          chalk.white("    cd backend && uvicorn app.main:app --reload\n")
+        );
+        process.exit(1);
+      }
+
+      spinner.text = `Generating PDF for ${productLabel} via Foxit APIs...`;
 
       try {
         const { pdf, durationMs } = await generatePDF(releaseData, {
@@ -86,7 +112,9 @@ export function registerGenerateCommand(program) {
 
         writeFileSync(outputPath, pdf);
 
-        spinner.succeed(chalk.green("PDF generated successfully!"));
+        spinner.succeed(
+          chalk.green(`PDF generated for ${chalk.bold(productLabel)}`)
+        );
         console.log();
         console.log(chalk.bold("  Output:   "), chalk.cyan(outputPath));
         console.log(

@@ -1,10 +1,17 @@
 """
 DocForge CLI — Backend Configuration
-Loads all settings from environment variables with sensible defaults.
+Loads .env automatically, then reads all settings from environment variables.
 """
 
 import os
+import sys
 from dataclasses import dataclass
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+_env_path = Path(__file__).resolve().parent.parent.parent / ".env"
+load_dotenv(_env_path)
 
 
 @dataclass(frozen=True)
@@ -36,7 +43,7 @@ class AppConfig:
     poll_timeout: float
 
 
-def load_config() -> AppConfig:
+def _load_config() -> AppConfig:
     return AppConfig(
         host=os.getenv("APP_HOST", "0.0.0.0"),
         port=int(os.getenv("APP_PORT", "8000")),
@@ -66,4 +73,26 @@ def load_config() -> AppConfig:
     )
 
 
-settings = load_config()
+def _validate_config(cfg: AppConfig) -> None:
+    """Fail fast if Foxit credentials are missing."""
+    missing: list[str] = []
+    if not cfg.docgen.client_id:
+        missing.append("FOXIT_DOCGEN_CLIENT_ID")
+    if not cfg.docgen.client_secret:
+        missing.append("FOXIT_DOCGEN_CLIENT_SECRET")
+    if not cfg.pdf_services.client_id:
+        missing.append("FOXIT_PDF_SERVICES_CLIENT_ID")
+    if not cfg.pdf_services.client_secret:
+        missing.append("FOXIT_PDF_SERVICES_CLIENT_SECRET")
+    if missing:
+        print(
+            f"\n  ERROR: Missing Foxit credentials: {', '.join(missing)}\n"
+            f"  Copy backend/.env.example → backend/.env and fill in your keys.\n"
+            f"  Get free keys at https://app.developer-api.foxit.com/pricing\n",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+
+settings = _load_config()
+_validate_config(settings)

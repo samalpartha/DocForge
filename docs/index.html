@@ -60,10 +60,10 @@
             <a class="hover:text-primary transition-colors" href="#features">Features</a>
             <a class="hover:text-primary transition-colors" href="#architecture">Architecture</a>
             <a class="hover:text-primary transition-colors" href="#quickstart">Quick Start</a>
-            <a class="hover:text-primary transition-colors" href="https://github.com/YOUR_USERNAME/docforge">Docs</a>
+            <a class="hover:text-primary transition-colors" href="https://github.com/docforge/docforge-cli">Docs</a>
         </div>
         <div class="flex items-center gap-4">
-            <a class="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-border-dark hover:bg-white/10 transition-all" href="https://github.com/YOUR_USERNAME/docforge">
+            <a class="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-border-dark hover:bg-white/10 transition-all" href="https://github.com/docforge/docforge-cli">
                 <span class="material-symbols-outlined text-sm">terminal</span>
                 <span class="text-sm font-semibold">GitHub</span>
             </a>
@@ -230,17 +230,18 @@
                 <span class="material-symbols-outlined text-4xl text-primary mb-6 group-hover:scale-110 transition-transform">article</span>
                 <h3 class="text-xl font-bold mb-4">Foxit Document Generation API</h3>
                 <p class="text-slate-400 leading-relaxed">
-                    Merges your release data into professional, pre-designed templates.
-                    Supports complex tables, dynamic branding, and automatic table of
-                    contents creation.
+                    Builds a Word template with Foxit token syntax, merges your release JSON,
+                    and returns a professionally formatted PDF with tables for features,
+                    fixes, and breaking changes &mdash; all in one synchronous API call.
                 </p>
             </div>
             <div class="p-8 rounded-xl bg-card-dark border border-border-dark hover:border-primary/50 transition-all group">
                 <span class="material-symbols-outlined text-4xl text-primary mb-6 group-hover:scale-110 transition-transform">cloud_sync</span>
                 <h3 class="text-xl font-bold mb-4">Foxit PDF Services API</h3>
                 <p class="text-slate-400 leading-relaxed">
-                    Advanced PDF manipulation including OCR for attachments, file
-                    compression, and standard-compliant archival formatting (PDF/A).
+                    Post-processes the generated PDF: adds an "INTERNAL" or "DRAFT" watermark,
+                    flattens annotations for archival, and applies password protection &mdash;
+                    all through async task-based REST endpoints.
                 </p>
             </div>
         </div>
@@ -252,23 +253,24 @@
     <div class="max-w-7xl mx-auto px-6">
         <div class="grid lg:grid-cols-2 gap-16 items-center">
             <div>
-                <h2 class="text-3xl font-bold mb-6">GitHub Standard JSON</h2>
+                <h2 class="text-3xl font-bold mb-6">Simple Structured JSON</h2>
                 <p class="text-slate-400 mb-8 leading-relaxed">
-                    No custom schemas needed. DocForge works natively with the standard
-                    GitHub Release API output. Simply point the CLI to your JSON export.
+                    Define your release in a clean JSON file. Features, fixes, breaking
+                    changes, and links &mdash; DocForge maps every field into professional
+                    PDF sections automatically.
                 </p>
                 <ul class="space-y-4">
                     <li class="flex items-center gap-3 text-slate-300 font-medium">
                         <span class="material-symbols-outlined text-primary">check_circle</span>
-                        Automatic Markdown parsing in body
+                        Missing fields gracefully show "None"
                     </li>
                     <li class="flex items-center gap-3 text-slate-300 font-medium">
                         <span class="material-symbols-outlined text-primary">check_circle</span>
-                        Contributor list extraction
+                        Breaking changes highlighted in red
                     </li>
                     <li class="flex items-center gap-3 text-slate-300 font-medium">
                         <span class="material-symbols-outlined text-primary">check_circle</span>
-                        Asset download link integration
+                        Integrates into CI/CD with GitHub Actions
                     </li>
                 </ul>
             </div>
@@ -358,7 +360,7 @@
             <div>
                 <h4 class="font-bold mb-6 text-sm uppercase tracking-widest text-slate-400">Resources</h4>
                 <ul class="space-y-4 text-sm text-slate-500">
-                    <li><a class="hover:text-primary transition-colors" href="https://github.com/YOUR_USERNAME/docforge">Documentation</a></li>
+                    <li><a class="hover:text-primary transition-colors" href="https://github.com/docforge/docforge-cli">Documentation</a></li>
                     <li><a class="hover:text-primary transition-colors" href="https://developer-api.foxit.com">API Reference</a></li>
                     <li><a class="hover:text-primary transition-colors" href="#">Guides</a></li>
                     <li><a class="hover:text-primary transition-colors" href="#">Support</a></li>

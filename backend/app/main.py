@@ -37,6 +37,23 @@ app.add_middleware(
 )
 
 
+@app.on_event("startup")
+async def _startup_banner():
+    from app.core.config import settings
+    logger.info("")
+    logger.info("╔══════════════════════════════════════════════════╗")
+    logger.info("║           DocForge CLI  ·  API Server           ║")
+    logger.info("╠══════════════════════════════════════════════════╣")
+    logger.info("║  POST /v1/generate   → Release Notes PDF        ║")
+    logger.info("║  GET  /health        → Health check             ║")
+    logger.info("╠══════════════════════════════════════════════════╣")
+    logger.info("║  Doc Gen API : %-33s║", settings.docgen.base_url)
+    logger.info("║  PDF Svc API : %-33s║", settings.pdf_services.base_url)
+    logger.info("║  Credentials : ✓ loaded                         ║")
+    logger.info("╚══════════════════════════════════════════════════╝")
+    logger.info("")
+
+
 class GenerateRequest(BaseModel):
     data: dict[str, Any] = Field(
         ..., description="Release JSON payload (product_name, version, features, etc.)"

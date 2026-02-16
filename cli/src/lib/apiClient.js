@@ -8,11 +8,25 @@ import axios from "axios";
 import { getConfig } from "./config.js";
 
 /**
+ * Quick health check against the backend.
+ * Returns true if reachable, false otherwise.
+ */
+export async function healthCheck() {
+  const { backendUrl } = getConfig();
+  try {
+    const resp = await axios.get(`${backendUrl}/health`, { timeout: 5_000 });
+    return resp.status === 200;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Call POST /v1/generate on the DocForge backend.
  *
  * @param {object} releaseData  - Parsed release JSON
  * @param {object} options      - { watermark, password, templateId }
- * @returns {Promise<Buffer>}   - PDF file bytes
+ * @returns {Promise<{pdf: Buffer, durationMs: number|null}>}
  */
 export async function generatePDF(releaseData, options = {}) {
   const { backendUrl } = getConfig();

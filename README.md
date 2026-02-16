@@ -93,44 +93,36 @@ DocForge CLI automates the entire workflow:
 - Node.js 18+
 - Foxit Developer account ([sign up free](https://app.developer-api.foxit.com/pricing))
 
-### 1. Clone the repo
+### Option A: One-command setup (recommended)
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/docforge.git
 cd docforge
+make setup                       # installs everything, creates .env
+# Edit backend/.env with your Foxit API credentials
+make backend                     # start API server (leave running)
+# In a second terminal:
+make demo                        # generates a PDF with DRAFT watermark + password
 ```
 
-### 2. Set up the backend
+### Option B: Manual setup
 
 ```bash
+# 1. Backend
 cd backend
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-
-# Configure Foxit credentials
-cp .env.example .env
-# Edit .env with your Foxit API credentials
-
-# Start the server
+cp .env.example .env             # edit with your Foxit credentials
 uvicorn app.main:app --reload
-```
 
-The backend runs at `http://localhost:8000`. Check health at `http://localhost:8000/health`.
-
-### 3. Set up the CLI
-
-```bash
+# 2. CLI (in a second terminal)
 cd cli
 npm install
-npm link    # makes `docforge` available globally
+node src/index.js generate ../examples/release.json --out output.pdf
 ```
 
-### 4. Generate your first PDF
-
-```bash
-docforge generate examples/release.json --out release-notes.pdf
-```
+The backend runs at `http://localhost:8000`. Health check: `GET /health`.
 
 ---
 
@@ -140,7 +132,7 @@ docforge generate examples/release.json --out release-notes.pdf
 docforge generate <input.json> [options]
 
 Options:
-  -o, --out <path>        Output PDF path (default: "release-notes.pdf")
+  -o, --out <path>        Output PDF path (default: <product>-v<version>-release-notes.pdf)
   -w, --watermark <text>  Watermark text (default: "INTERNAL")
   -p, --password <pwd>    Password-protect the PDF
   -t, --template <id>     Template ID (default: "release-notes-v1")
@@ -194,29 +186,37 @@ If any optional field is missing, the PDF shows "None" in that section.
 Every step is logged with its duration — useful for debugging and impressive in demos:
 
 ```
-08:42:01 | INFO    | ============================================================
-08:42:01 | INFO    | DocForge Pipeline — starting
-08:42:01 | INFO    | ============================================================
-08:42:01 | INFO    | ▶ Step 1 · Validate input — started
-08:42:01 | INFO    | ✔ Step 1 · Validate input — completed in 1 ms
-08:42:01 | INFO    | ▶ Step 2 · Generate base PDF (Document Generation API) — started
-08:42:01 | INFO    | ▶ Build Word template — started
-08:42:01 | INFO    | ✔ Build Word template — completed in 45 ms
-08:42:01 | INFO    | ▶ Foxit Document Generation API call — started
-08:42:04 | INFO    | ✔ Foxit Document Generation API call — completed in 2830 ms
-08:42:04 | INFO    | ✔ Step 2 · Generate base PDF — completed in 2876 ms
-08:42:04 | INFO    | ▶ PDF Services — upload document — started
-08:42:05 | INFO    | ✔ PDF Services — upload document — completed in 1200 ms
-08:42:05 | INFO    | ▶ PDF Services — add watermark — started
-08:42:08 | INFO    | ✔ PDF Services — add watermark — completed in 3100 ms
-08:42:08 | INFO    | ▶ PDF Services — flatten PDF — started
-08:42:10 | INFO    | ✔ PDF Services — flatten PDF — completed in 2400 ms
-08:42:10 | INFO    | ▶ PDF Services — download result — started
-08:42:11 | INFO    | ✔ PDF Services — download result — completed in 800 ms
-08:42:11 | INFO    | ============================================================
-08:42:11 | INFO    | DocForge Pipeline — complete  (142857 bytes)
-08:42:11 | INFO    | ============================================================
+16:24:07 | INFO    | ============================================================
+16:24:07 | INFO    | DocForge Pipeline — starting
+16:24:07 | INFO    | ============================================================
+16:24:07 | INFO    | ▶ Step 1 · Validate input — started
+16:24:07 | INFO    |   Product: Acme Platform v2.4.0
+16:24:07 | INFO    | ✔ Step 1 · Validate input — completed in 0 ms
+16:24:07 | INFO    | ▶ Step 2 · Generate base PDF (Document Generation API) — started
+16:24:07 | INFO    | ▶ Build Word template — started
+16:24:07 | INFO    | ✔ Build Word template — completed in 28 ms
+16:24:08 | INFO    | ✔ Foxit Document Generation API call — completed in 1127 ms
+16:24:08 | INFO    |   Document Generation returned 38822 bytes PDF
+16:24:08 | INFO    | ✔ Step 2 · Generate base PDF — completed in 1156 ms
+16:24:09 | INFO    | ▶ PDF Services — upload document — started
+16:24:09 | INFO    |   Uploaded document → 69938af9…
+16:24:09 | INFO    | ✔ PDF Services — upload document — completed in 994 ms
+16:24:09 | INFO    | ▶ PDF Services — add watermark — started
+16:24:11 | INFO    | ✔ PDF Services — add watermark — completed in 1945 ms
+16:24:11 | INFO    | ▶ PDF Services — flatten PDF — started
+16:24:13 | INFO    | ✔ PDF Services — flatten PDF — completed in 1949 ms
+16:24:13 | INFO    | ▶ PDF Services — protect PDF — started
+16:24:15 | INFO    | ✔ PDF Services — protect PDF — completed in 2006 ms
+16:24:15 | INFO    | ▶ PDF Services — download result — started
+16:24:16 | INFO    |   Downloaded 39332 bytes
+16:24:16 | INFO    | ✔ PDF Services — download result — completed in 1074 ms
+16:24:16 | INFO    | ============================================================
+16:24:16 | INFO    | DocForge Pipeline — complete  (39332 bytes)
+16:24:16 | INFO    | ============================================================
+16:24:16 | INFO    | Total request time: 9126 ms
 ```
+
+> The output above is from a real run, not synthetic. Every Foxit API call is timed.
 
 ---
 
@@ -226,36 +226,39 @@ Every step is logged with its duration — useful for debugging and impressive i
 docforge/
 ├── README.md
 ├── LICENSE
+├── Makefile                          # make setup / make backend / make demo
 ├── examples/
-│   └── release.json              # Sample input
+│   └── release.json                  # Sample input
 ├── templates/
 │   └── release-notes.template.json   # Template definition
 ├── backend/
 │   ├── app/
-│   │   ├── main.py               # FastAPI app, POST /v1/generate
+│   │   ├── main.py                   # FastAPI app, POST /v1/generate
 │   │   ├── core/
-│   │   │   └── config.py         # Environment-based configuration
+│   │   │   └── config.py            # Environment config + credential check
 │   │   ├── foxit/
-│   │   │   ├── auth.py           # Foxit API auth headers
-│   │   │   ├── docgen.py         # Document Generation API client
-│   │   │   ├── pdfservices.py    # PDF Services API client
-│   │   │   └── pipeline.py       # End-to-end pipeline orchestrator
+│   │   │   ├── auth.py              # Foxit API auth headers
+│   │   │   ├── docgen.py            # Document Generation API client
+│   │   │   ├── pdfservices.py       # PDF Services API client
+│   │   │   └── pipeline.py          # End-to-end pipeline orchestrator
 │   │   └── utils/
-│   │       ├── logging.py        # Step logger with duration tracking
-│   │       └── validate.py       # Input JSON validation
+│   │       ├── logging.py           # Step logger with duration tracking
+│   │       └── validate.py          # Input JSON validation
 │   ├── requirements.txt
 │   ├── Dockerfile
 │   └── .env.example
 ├── cli/
 │   ├── package.json
 │   ├── src/
-│   │   ├── index.js              # CLI entry point
+│   │   ├── index.js                 # CLI entry point
 │   │   ├── commands/
-│   │   │   └── generate.js       # `generate` command implementation
+│   │   │   └── generate.js          # `generate` command
 │   │   └── lib/
-│   │       ├── apiClient.js      # HTTP client for the backend
-│   │       └── config.js         # CLI configuration
+│   │       ├── apiClient.js         # HTTP client + health check
+│   │       └── config.js            # CLI configuration
 │   └── Dockerfile
+├── docs/
+│   └── index.html                   # Landing page (GitHub Pages)
 └── .gitignore
 ```
 
