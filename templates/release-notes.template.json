@@ -1,0 +1,83 @@
+{
+  "templateId": "release-notes-v1",
+  "title": "Release Notes",
+  "description": "Standard release notes template for product releases",
+  "sections": [
+    {
+      "id": "header",
+      "type": "title",
+      "label": "Product Release",
+      "mapping": {
+        "product_name": "{{product_name}}",
+        "version": "{{version}}",
+        "release_date": "{{release_date}}"
+      },
+      "format": "{{product_name}} — Release Notes v{{version}}"
+    },
+    {
+      "id": "summary",
+      "type": "paragraph",
+      "label": "Summary",
+      "mapping": {
+        "summary": "{{summary}}"
+      },
+      "fallback": "None"
+    },
+    {
+      "id": "features",
+      "type": "list",
+      "label": "New Features",
+      "mapping": {
+        "items": "{{features}}",
+        "title": "{{title}}",
+        "description": "{{description}}"
+      },
+      "fallback": "None"
+    },
+    {
+      "id": "fixes",
+      "type": "list",
+      "label": "Bug Fixes",
+      "mapping": {
+        "items": "{{fixes}}",
+        "id": "{{id}}",
+        "title": "{{title}}",
+        "description": "{{description}}"
+      },
+      "fallback": "None"
+    },
+    {
+      "id": "breaking_changes",
+      "type": "list",
+      "label": "Breaking Changes",
+      "mapping": {
+        "items": "{{breaking_changes}}",
+        "title": "{{title}}",
+        "description": "{{description}}",
+        "migration": "{{migration}}"
+      },
+      "fallback": "None",
+      "highlight": true
+    },
+    {
+      "id": "links",
+      "type": "links",
+      "label": "Useful Links",
+      "mapping": {
+        "items": "{{links}}",
+        "label": "{{label}}",
+        "url": "{{url}}"
+      },
+      "fallback": "None"
+    }
+  ],
+  "watermark": {
+    "text": "INTERNAL",
+    "opacity": 0.15,
+    "rotation": -45
+  },
+  "headerFooter": {
+    "header": "{{product_name}} v{{version}}",
+    "footer": "Page {{page_number}} of {{total_pages}} | Confidential"
+  }
+}

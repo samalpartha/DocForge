@@ -1,0 +1,63 @@
+{
+  "product_name": "Acme Platform",
+  "version": "2.4.0",
+  "release_date": "2026-02-16",
+  "summary": "This release introduces the new real-time collaboration engine, improves dashboard performance by 40%, and resolves several critical authentication bugs reported by enterprise customers.",
+  "features": [
+    {
+      "title": "Real-time Collaboration Engine",
+      "description": "Multiple users can now edit documents simultaneously with live cursor tracking and conflict resolution."
+    },
+    {
+      "title": "Dashboard Performance Overhaul",
+      "description": "Rewrote the analytics dashboard using virtualized rendering. Load times reduced from 3.2s to 0.8s on average."
+    },
+    {
+      "title": "Bulk Export API",
+      "description": "New endpoint POST /v2/exports/bulk allows exporting up to 10,000 records in a single request with streaming response."
+    }
+  ],
+  "fixes": [
+    {
+      "id": "BUG-1042",
+      "title": "SSO token refresh loop",
+      "description": "Fixed an infinite redirect loop that occurred when SAML tokens expired during an active session."
+    },
+    {
+      "id": "BUG-1058",
+      "title": "CSV export encoding",
+      "description": "Resolved UTF-8 BOM handling that caused garbled characters in exported CSV files opened in Excel."
+    },
+    {
+      "id": "BUG-1071",
+      "title": "Rate limiter false positives",
+      "description": "Corrected a race condition in the distributed rate limiter that incorrectly throttled legitimate API requests under high concurrency."
+    }
+  ],
+  "breaking_changes": [
+    {
+      "title": "Removed deprecated /v1/users endpoint",
+      "description": "The /v1/users endpoint has been removed. Migrate to /v2/users which supports pagination and field selection.",
+      "migration": "Replace all calls to /v1/users with /v2/users?fields=id,name,email&limit=50"
+    },
+    {
+      "title": "Changed authentication header format",
+      "description": "Bearer tokens must now include the 'v2:' prefix. Old format: 'Bearer abc123'. New format: 'Bearer v2:abc123'.",
+      "migration": "Update your auth middleware to prepend 'v2:' to all issued tokens."
+    }
+  ],
+  "links": [
+    {
+      "label": "Full Changelog",
+      "url": "https://github.com/acme/platform/compare/v2.3.0...v2.4.0"
+    },
+    {
+      "label": "Migration Guide",
+      "url": "https://docs.acme.io/migrations/2.4.0"
+    },
+    {
+      "label": "API Reference",
+      "url": "https://api.acme.io/docs/v2"
+    }
+  ]
+}
