@@ -364,6 +364,22 @@ async def ocr_structurize(req: StructurizeRequest):
 # Landing page (mounted LAST so it doesn't override API routes)
 # ──────────────────────────────────────────────────────────
 
-_docs_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "docs"))
-if os.path.isdir(_docs_dir):
+# Static Files (Frontend)
+# Try multiple paths to accommodate local and Docker environments
+_docs_candidates = [
+    os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "docs")),  # Local
+    os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "docs")),        # Docker
+    os.path.join(os.getcwd(), "docs"),                                             # Root-relative
+]
+
+_docs_dir = None
+for candidate in _docs_candidates:
+    if os.path.isdir(candidate):
+        _docs_dir = candidate
+        break
+
+if _docs_dir:
+    logger.info("  Frontend found at: %s", _docs_dir)
     app.mount("/", StaticFiles(directory=_docs_dir, html=True), name="landing")
+else:
+    logger.warning("  Frontend not found. Root will return 404.")
