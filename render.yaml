@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: docforge-api
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: FOXIT_DOCGEN_BASE_URL
+        value: https://na1.fusion.foxit.com
+      - key: FOXIT_DOCGEN_CLIENT_ID
+        sync: false
+      - key: FOXIT_DOCGEN_CLIENT_SECRET
+        sync: false
+      - key: FOXIT_PDF_SERVICES_BASE_URL
+        value: https://na1.fusion.foxit.com/pdf-services
+      - key: FOXIT_PDF_SERVICES_CLIENT_ID
+        sync: false
+      - key: FOXIT_PDF_SERVICES_CLIENT_SECRET
+        sync: false
+      - key: PYTHON_VERSION
+        value: "3.12.0"

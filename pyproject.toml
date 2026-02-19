@@ -1,0 +1,7 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["backend"]
+asyncio_mode = "auto"
+markers = [
+    "slow: marks tests that may take a while (e.g. tectonic compilation)",
+]

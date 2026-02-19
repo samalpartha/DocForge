@@ -1,0 +1,74 @@
+# DocForge CLI — Auto-generate Release Notes PDF on every GitHub Release
+#
+# This workflow triggers when you publish a GitHub Release, extracts the
+# release data, calls the DocForge backend to generate a PDF, and attaches
+# the PDF as a release asset.
+#
+# Prerequisites:
+#   1. Deploy the DocForge backend (Render, Fly.io, or self-hosted)
+#   2. Set these repository secrets:
+#      - DOCFORGE_API_URL: Your hosted backend URL (e.g. https://docforge-api.onrender.com)
+
+name: Generate Release Notes PDF
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  generate-pdf:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract release data
+        id: release
+        run: |
+          cat <<'EOF' > release.json
+          {
+            "product_name": "${{ github.event.repository.name }}",
+            "version": "${{ github.event.release.tag_name }}",
+            "release_date": "${{ github.event.release.published_at }}",
+            "summary": "${{ github.event.release.name }}",
+            "features": [],
+            "fixes": [],
+            "breaking_changes": [],
+            "links": [
+              {
+                "label": "Full Changelog",
+                "url": "${{ github.event.release.html_url }}"
+              }
+            ]
+          }
+          EOF
+          echo "Generated release.json from GitHub Release event"
+          cat release.json
+
+      - name: Generate PDF via DocForge API
+        run: |
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+            "${{ secrets.DOCFORGE_API_URL }}/v1/generate" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --argjson data "$(cat release.json)" '{
+              data: $data,
+              watermark: "RELEASE",
+              password: null
+            }')" \
+            -o release-notes.pdf)
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "DocForge API returned HTTP $HTTP_CODE"
+            exit 1
+          fi
+
+          SIZE=$(wc -c < release-notes.pdf | tr -d ' ')
+          echo "Generated release-notes.pdf ($SIZE bytes)"
+
+      - name: Upload PDF to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-notes.pdf
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

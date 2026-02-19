@@ -34,9 +34,11 @@ export async function generatePDF(releaseData, options = {}) {
 
   const body = {
     data: releaseData,
-    template_id: options.templateId || "release-notes-v1",
+    template_id: options.templateId || "product-release",
     watermark: options.watermark || "INTERNAL",
     password: options.password || null,
+    engine: options.engine || "docgen",
+    verify: options.verify || false,
   };
 
   const response = await axios.post(url, body, {
@@ -46,8 +48,19 @@ export async function generatePDF(releaseData, options = {}) {
   });
 
   const durationMs = response.headers["x-pipeline-duration-ms"];
+
+  // Parse job metadata from base64 header
+  let jobResult = null;
+  const jobHeader = response.headers["x-docforge-job"];
+  if (jobHeader) {
+    try {
+      jobResult = JSON.parse(Buffer.from(jobHeader, "base64").toString("utf-8"));
+    } catch { /* ignore parse errors */ }
+  }
+
   return {
     pdf: Buffer.from(response.data),
     durationMs: durationMs ? Number(durationMs) : null,
+    jobResult,
   };
 }

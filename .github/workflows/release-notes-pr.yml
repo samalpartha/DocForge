@@ -1,0 +1,39 @@
+# DocForge CLI — Generate draft PDF preview on PR
+#
+# Triggers when release.json is modified in a pull request.
+# Generates a DRAFT-watermarked PDF and uploads as artifact.
+
+name: Release Notes PR Preview
+
+on:
+  pull_request:
+    paths: ['release.json', 'examples/release.json']
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate draft PDF
+        run: |
+          INPUT="release.json"
+          [ ! -f "$INPUT" ] && INPUT="examples/release.json"
+
+          curl -s -X POST "${{ secrets.DOCFORGE_API_URL }}/v1/generate" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --argjson data "$(cat $INPUT)" --arg wm "DRAFT PR #${{ github.event.pull_request.number }}" '{
+              data: $data,
+              watermark: $wm,
+              verify: true
+            }')" \
+            -o draft-release-notes.pdf
+
+          SIZE=$(wc -c < draft-release-notes.pdf | tr -d ' ')
+          echo "Generated draft-release-notes.pdf ($SIZE bytes)"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: draft-release-notes
+          path: draft-release-notes.pdf
+          retention-days: 7

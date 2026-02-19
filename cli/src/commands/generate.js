@@ -23,6 +23,10 @@ export function registerGenerateCommand(program) {
     .option("-w, --watermark <text>", "Watermark text", "INTERNAL")
     .option("-p, --password <pwd>", "Password-protect the PDF")
     .option("-t, --template <id>", "Template ID", "release-notes-v1")
+    .option("-e, --engine <type>", "Rendering engine: docgen or latex", "docgen")
+    .option("-v, --verify", "Run post-processing verification checks")
+    .option("--open", "Open PDF in system reader after generation")
+    .option("--json", "Output job metadata as JSON to stdout")
     .action(async (input, opts) => {
       const inputPath = resolve(input);
 
@@ -79,8 +83,12 @@ export function registerGenerateCommand(program) {
       console.log(chalk.gray(`  Input:     ${inputPath}`));
       console.log(chalk.gray(`  Output:    ${outputPath}`));
       console.log(chalk.gray(`  Watermark: ${opts.watermark}`));
+      console.log(chalk.gray(`  Engine:    ${opts.engine}`));
       if (opts.password) {
         console.log(chalk.gray("  Password:  ****"));
+      }
+      if (opts.verify) {
+        console.log(chalk.gray("  Verify:    enabled"));
       }
       console.log();
 
@@ -104,10 +112,12 @@ export function registerGenerateCommand(program) {
       spinner.text = `Generating PDF for ${productLabel} via Foxit APIs...`;
 
       try {
-        const { pdf, durationMs } = await generatePDF(releaseData, {
+        const { pdf, durationMs, jobResult } = await generatePDF(releaseData, {
           watermark: opts.watermark,
           password: opts.password,
           templateId: opts.template,
+          engine: opts.engine,
+          verify: !!opts.verify,
         });
 
         writeFileSync(outputPath, pdf);
@@ -121,13 +131,52 @@ export function registerGenerateCommand(program) {
           chalk.bold("  Size:     "),
           chalk.cyan(`${(pdf.length / 1024).toFixed(1)} KB`)
         );
+        console.log(
+          chalk.bold("  Engine:   "),
+          chalk.cyan(opts.engine)
+        );
         if (durationMs) {
           console.log(
             chalk.bold("  Pipeline: "),
             chalk.cyan(`${durationMs.toFixed(0)} ms`)
           );
         }
+
+        // Show verification results
+        if (jobResult && jobResult.verification) {
+          const v = jobResult.verification;
+          const status = v.passed
+            ? chalk.green(`✓ ${v.checks_passed}/${v.checks_total} checks passed`)
+            : chalk.red(`✗ ${v.checks_passed}/${v.checks_total} checks passed`);
+          console.log(chalk.bold("  Verify:   "), status);
+          console.log(chalk.bold("  Pages:    "), chalk.cyan(v.page_count));
+          console.log(chalk.bold("  Hash:     "), chalk.gray(jobResult.artifact?.content_hash?.slice(0, 24) + "..."));
+        }
+
+        // Show timings
+        if (jobResult && jobResult.timings) {
+          console.log();
+          console.log(chalk.bold("  Step Timings:"));
+          for (const t of jobResult.timings) {
+            const icon = t.status === "ok" ? chalk.green("✓") : t.status === "skipped" ? chalk.gray("⊘") : chalk.red("✗");
+            console.log(`    ${icon} ${t.step.padEnd(18)} ${chalk.cyan(t.duration_ms + "ms")} ${chalk.gray(t.detail || "")}`);
+          }
+        }
+
+        // JSON output mode
+        if (opts.json && jobResult) {
+          console.log();
+          console.log(JSON.stringify(jobResult, null, 2));
+        }
+
         console.log();
+
+        // Open in system reader
+        if (opts.open) {
+          const { exec } = await import("node:child_process");
+          const cmd = process.platform === "darwin" ? "open" : process.platform === "win32" ? "start" : "xdg-open";
+          exec(`${cmd} "${outputPath}"`);
+        }
       } catch (err) {
         spinner.fail(chalk.red("Failed to generate PDF"));
         console.error();

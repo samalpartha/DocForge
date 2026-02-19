@@ -1,0 +1,265 @@
+"""
+DocForge — Text-to-JSON structured extractor.
+
+Takes raw OCR text and extracts structured release note fields
+using pattern matching. Returns a draft JSON with confidence
+indicators and missing-field warnings.
+
+Quality gates:
+  > 0.90: auto-populate, allow one-click generation
+  0.70–0.90: populate with warnings, require user confirmation
+  < 0.70: force manual review, block auto-generation
+"""
+
+from __future__ import annotations
+
+import re
+from dataclasses import dataclass, field
+
+from app.ocr.extract import OCRResult
+from app.utils.logging import logger, step_timer
+
+
+@dataclass
+class ExtractionResult:
+    draft_json: dict
+    confidence: float = 0.0
+    missing_required: list[str] = field(default_factory=list)
+    warnings: list[str] = field(default_factory=list)
+    needs_review: bool = True
+
+
+VERSION_PATTERN = re.compile(
+    r"(?:v(?:ersion)?[\s.:]*)?(\d+\.\d+(?:\.\d+)?(?:[-+][\w.]+)?)",
+    re.IGNORECASE,
+)
+
+SECTION_PATTERNS = {
+    "features": re.compile(
+        r"^\s*(?:new\s+features?|what'?s\s+new|additions?|enhancements?|improvements?)\s*$",
+        re.IGNORECASE,
+    ),
+    "fixes": re.compile(
+        r"^\s*(?:bug\s*fix(?:es)?|resolved\s+issues?|fixed\s+issues?|patches?|corrections?)\s*$",
+        re.IGNORECASE,
+    ),
+    "breaking": re.compile(
+        r"^\s*(?:breaking\s+changes?|deprecat(?:ed|ions?)|removed\s+features?|migration\s+notes?)\s*$",
+        re.IGNORECASE,
+    ),
+}
+
+
+def _extract_product_name(text: str) -> str:
+    """Try to find a product name in the first few lines."""
+    lines = [line_content.strip() for line_content in text.split("\n") if line_content.strip()][:5]
+
+    for line in lines:
+        # Skip lines that are just version numbers or dates
+        if re.match(r"^v?\d+\.\d+", line) or re.match(r"^\d{4}-\d{2}-\d{2}$", line):
+            continue
+        # Skip common headers
+        if re.match(r"^(release\s+notes?|changelog|what'?s\s+new)", line, re.IGNORECASE):
+            continue
+        # Return first meaningful line
+        cleaned = re.sub(r"\s*[-—:]\s*release\s+notes?.*$", "", line, flags=re.IGNORECASE)
+        cleaned = re.sub(r"\s*v?\d+\.\d+.*$", "", cleaned).strip()
+        if cleaned and len(cleaned) > 2:
+            return cleaned
+
+    return ""
+
+
+def _extract_version(text: str) -> str:
+    """Find the first version-like string."""
+    match = VERSION_PATTERN.search(text[:500])
+    return match.group(1) if match else ""
+
+
+def _extract_date(text: str) -> str:
+    """Find an ISO-style date."""
+    date_match = re.search(r"(\d{4}[-/]\d{2}[-/]\d{2})", text[:500])
+    if date_match:
+        return date_match.group(1).replace("/", "-")
+    return ""
+
+
+def _split_sections(text: str) -> dict[str, str]:
+    """Split text into named sections based on heading patterns."""
+    sections: dict[str, str] = {}
+    current_section = "preamble"
+    current_text: list[str] = []
+
+    for line in text.split("\n"):
+        matched = False
+        for section_name, pattern in SECTION_PATTERNS.items():
+            if pattern.search(line):
+                if current_text:
+                    sections[current_section] = "\n".join(current_text)
+                current_section = section_name
+                current_text = []
+                matched = True
+                break
+        if not matched:
+            current_text.append(line)
+
+    if current_text:
+        sections[current_section] = "\n".join(current_text)
+
+    return sections
+
+
+def _extract_list_items(text: str) -> list[dict[str, str]]:
+    """Extract bullet points or numbered items as title/description pairs."""
+    items: list[dict[str, str]] = []
+    lines = [line_content.strip() for line_content in text.split("\n") if line_content.strip()]
+
+    for line in lines:
+        # Remove bullet markers
+        cleaned = re.sub(r"^[\s•\-\*\d+\.\)]+\s*", "", line).strip()
+        if not cleaned or len(cleaned) < 3:
+            continue
+
+        # Try to split on colon or dash separator
+        parts = re.split(r"\s*[:—–]\s+", cleaned, maxsplit=1)
+        if len(parts) == 2 and len(parts[0]) < 100:
+            items.append({"title": parts[0], "description": parts[1]})
+        else:
+            items.append({"title": cleaned, "description": ""})
+
+    return items
+
+
+def _extract_fix_items(text: str) -> list[dict[str, str]]:
+    """Extract bug fix items, attempting to find IDs."""
+    items: list[dict[str, str]] = []
+    raw_items = _extract_list_items(text)
+
+    for i, item in enumerate(raw_items):
+        # Try to find a bug ID pattern
+        id_match = re.match(
+            r"((?:BUG|FIX|ISSUE|CVE|JIRA|TICKET)[-\s]?\d+)",
+            item["title"],
+            re.IGNORECASE,
+        )
+        if id_match:
+            bug_id = id_match.group(1).upper()
+            remainder = item["title"][id_match.end():].strip().lstrip(":- ")
+            items.append({
+                "id": bug_id,
+                "title": remainder or item.get("description", f"Fix #{i+1}"),
+                "description": item.get("description", ""),
+            })
+        else:
+            items.append({
+                "id": f"FIX-{i+1:03d}",
+                "title": item["title"],
+                "description": item.get("description", ""),
+            })
+
+    return items
+
+
+def _extract_breaking_items(text: str) -> list[dict[str, str]]:
+    """Extract breaking changes with migration hints."""
+    items: list[dict[str, str]] = []
+    raw_items = _extract_list_items(text)
+
+    for item in raw_items:
+        migration = ""
+        desc = item.get("description", "")
+
+        # Look for migration hints
+        migrate_match = re.search(
+            r"(?:migrat|replac|updat|switch|use\s+instead)(.+)",
+            desc,
+            re.IGNORECASE,
+        )
+        if migrate_match:
+            migration = migrate_match.group(0).strip()
+
+        items.append({
+            "title": item["title"],
+            "description": desc,
+            "migration": migration or "See documentation for migration steps.",
+        })
+
+    return items
+
+
+def structurize(ocr_result: OCRResult) -> ExtractionResult:
+    """
+    Extract structured release data from OCR text.
+
+    Returns a draft JSON that can be reviewed and edited by the user
+    before being fed into the PDF generation pipeline.
+    """
+    with step_timer("Structurize OCR text → release JSON"):
+        text = ocr_result.raw_text
+        warnings: list[str] = []
+
+        product_name = _extract_product_name(text)
+        version = _extract_version(text)
+        release_date = _extract_date(text)
+        sections = _split_sections(text)
+
+        # Extract summary from preamble
+        preamble = sections.get("preamble", "")
+        summary_lines = [
+            line_content.strip() for line_content in preamble.split("\n")
+            if line_content.strip() and not VERSION_PATTERN.match(line_content.strip())
+            and line_content.strip() != product_name
+        ]
+        summary = " ".join(summary_lines[:3])
+
+        # Extract structured lists
+        features = _extract_list_items(sections.get("features", ""))
+        fixes = _extract_fix_items(sections.get("fixes", ""))
+        breaking = _extract_breaking_items(sections.get("breaking", ""))
+
+        draft = {
+            "product_name": product_name,
+            "version": version,
+            "release_date": release_date,
+            "summary": summary,
+            "features": features,
+            "fixes": fixes,
+            "breaking_changes": breaking,
+            "links": [],
+        }
+
+        # Check required fields
+        missing: list[str] = []
+        if not product_name:
+            missing.append("product_name")
+            warnings.append("Could not detect product name — please fill in manually.")
+        if not version:
+            missing.append("version")
+            warnings.append("Could not detect version number — please fill in manually.")
+
+        if not features and not fixes and not breaking:
+            warnings.append("No structured sections detected — the text may need manual parsing.")
+
+        # Determine confidence
+        extraction_confidence = ocr_result.overall_confidence
+        if missing:
+            extraction_confidence *= 0.5
+        if not features and not fixes:
+            extraction_confidence *= 0.7
+
+        needs_review = extraction_confidence < 0.85 or len(missing) > 0
+
+        logger.info(
+            "  Extraction: product=%s version=%s features=%d fixes=%d breaking=%d confidence=%.0f%% review=%s",
+            product_name or "?", version or "?",
+            len(features), len(fixes), len(breaking),
+            extraction_confidence * 100, needs_review,
+        )
+
+        return ExtractionResult(
+            draft_json=draft,
+            confidence=extraction_confidence,
+            missing_required=missing,
+            warnings=warnings,
+            needs_review=needs_review,
+        )

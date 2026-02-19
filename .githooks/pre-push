@@ -1,0 +1,37 @@
+#!/bin/sh
+# DocForge — pre-push hook
+#
+# Auto-generates a draft PDF when release.json changes.
+# Install: git config core.hooksPath .githooks
+#
+# This hook checks if release.json was modified in the commits
+# being pushed. If so, it generates a draft watermarked PDF.
+
+CHANGED=$(git diff --name-only @{push}.. 2>/dev/null | grep -E "(release\.json|examples/release\.json)" || true)
+
+if [ -n "$CHANGED" ]; then
+  echo ""
+  echo "  DocForge: release.json changed — generating draft PDF..."
+  echo ""
+
+  # Check if CLI is available
+  if command -v docforge >/dev/null 2>&1; then
+    docforge generate release.json --watermark "DRAFT" --out draft-release-notes.pdf 2>/dev/null
+    if [ $? -eq 0 ]; then
+      echo "  Done: draft-release-notes.pdf"
+    else
+      echo "  Warning: draft PDF generation failed (backend may not be running)"
+    fi
+  elif [ -f "cli/src/index.js" ]; then
+    node cli/src/index.js generate release.json --watermark "DRAFT" --out draft-release-notes.pdf 2>/dev/null
+    if [ $? -eq 0 ]; then
+      echo "  Done: draft-release-notes.pdf"
+    else
+      echo "  Warning: draft PDF generation failed (backend may not be running)"
+    fi
+  else
+    echo "  Skipped: docforge CLI not found"
+  fi
+
+  echo ""
+fi

@@ -1,0 +1,17 @@
+{
+  "product_name": "Acme Platform",
+  "version": "2.3.1-security",
+  "release_date": "2026-02-16",
+  "summary": "Critical security patch addressing CVE-2026-1234 (authentication bypass) and CVE-2026-1235 (XSS in dashboard). All users should upgrade immediately.",
+  "features": [],
+  "fixes": [
+    { "id": "CVE-2026-1234", "title": "Authentication bypass via crafted JWT", "description": "Malformed JWTs could bypass signature verification. Fixed by enforcing strict algorithm allowlist." },
+    { "id": "CVE-2026-1235", "title": "Stored XSS in dashboard comments", "description": "User-supplied HTML in comments was not sanitized. Fixed with DOMPurify integration." }
+  ],
+  "breaking_changes": [
+    { "title": "JWT algorithm restricted to RS256", "description": "HS256 and none algorithms are no longer accepted.", "migration": "Ensure all token issuers use RS256 signing." }
+  ],
+  "links": [
+    { "label": "Security Advisory", "url": "https://github.com/acme/platform/security/advisories" }
+  ]
+}

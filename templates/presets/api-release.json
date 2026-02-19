@@ -1,0 +1,22 @@
+{
+  "product_name": "Acme API",
+  "version": "3.0.0",
+  "release_date": "2026-02-16",
+  "summary": "Major API version bump with new GraphQL endpoint, rate limiting improvements, and deprecation of REST v1 endpoints.",
+  "features": [
+    { "title": "GraphQL API (beta)", "description": "New /graphql endpoint supporting queries, mutations, and subscriptions." },
+    { "title": "Adaptive rate limiting", "description": "Rate limits now adjust based on account tier and historical usage patterns." },
+    { "title": "Webhook retry with exponential backoff", "description": "Failed webhook deliveries are retried up to 5 times with increasing delay." }
+  ],
+  "fixes": [
+    { "id": "API-401", "title": "Pagination cursor overflow", "description": "Cursor values exceeding 2^53 now handled correctly with string-based cursors." }
+  ],
+  "breaking_changes": [
+    { "title": "REST v1 endpoints removed", "description": "All /v1/* endpoints return 410 Gone.", "migration": "Migrate to /v2/* or use the new GraphQL API." },
+    { "title": "Date format changed to ISO 8601", "description": "All date fields now return ISO 8601 format instead of Unix timestamps.", "migration": "Update date parsing to handle ISO 8601 strings." }
+  ],
+  "links": [
+    { "label": "API Reference v3", "url": "https://api.acme.io/docs/v3" },
+    { "label": "Migration Guide", "url": "https://docs.acme.io/api/v2-to-v3" }
+  ]
+}

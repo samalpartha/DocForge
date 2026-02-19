@@ -23,6 +23,8 @@ import httpx
 from app.foxit.auth import FoxitCredentials
 from app.utils.logging import logger, step_timer
 
+MAX_RETRIES = 1
+
 
 class PDFServicesClient:
     """Thin async wrapper around the Foxit PDF Services REST API."""
@@ -57,24 +59,34 @@ class PDFServicesClient:
                 resp.raise_for_status()
                 data = resp.json()
                 doc_id = data.get("documentId") or data.get("data", {}).get("documentId")
-                logger.info("  Uploaded document → %s", doc_id)
+                logger.info("  Uploaded %d bytes → docId %s", len(pdf_bytes), doc_id)
                 return doc_id
 
     async def _submit_operation(self, endpoint: str, payload: dict[str, Any]) -> dict:
-        """POST an operation and return the JSON response (contains taskId)."""
-        async with httpx.AsyncClient(timeout=60.0) as client:
-            resp = await client.post(
-                f"{self.base_url}{endpoint}",
-                headers=self._headers({"Content-Type": "application/json"}),
-                json=payload,
-            )
-            if not resp.is_success:
-                logger.error(
-                    "  PDF Services %s returned %d: %s",
-                    endpoint, resp.status_code, resp.text,
-                )
-            resp.raise_for_status()
-            return resp.json()
+        """POST an operation and return the JSON response (contains taskId).
+        Retries once on transient failure."""
+        last_err = None
+        for attempt in range(1, MAX_RETRIES + 2):
+            try:
+                async with httpx.AsyncClient(timeout=60.0) as client:
+                    resp = await client.post(
+                        f"{self.base_url}{endpoint}",
+                        headers=self._headers({"Content-Type": "application/json"}),
+                        json=payload,
+                    )
+                    if not resp.is_success:
+                        logger.error(
+                            "  PDF Services %s returned %d (attempt %d/%d): %s",
+                            endpoint, resp.status_code, attempt, MAX_RETRIES + 1, resp.text,
+                        )
+                    resp.raise_for_status()
+                    return resp.json()
+            except (httpx.HTTPStatusError, httpx.TransportError) as exc:
+                last_err = exc
+                if attempt <= MAX_RETRIES:
+                    logger.warning("  Retrying %s in 2s (attempt %d failed)", endpoint, attempt)
+                    await asyncio.sleep(2)
+        raise last_err  # type: ignore[misc]
 
     async def _poll_task(self, task_id: str) -> str:
         """Poll until the task completes and return the result documentId."""
@@ -111,7 +123,7 @@ class PDFServicesClient:
                         or task.get("data", {}).get("error")
                         or "unknown"
                     )
-                    logger.error("  Task %s failed: %s | Full response: %s", task_id, msg, task)
+                    logger.error("  Task %s failed: %s", task_id, msg)
                     raise RuntimeError(f"Task {task_id} failed: {msg}")
 
                 await asyncio.sleep(self.poll_interval)

@@ -1,0 +1,40 @@
+# DocForge CLI — Generate Release Notes PDF on merge to main
+#
+# Triggers when release.json is updated on the main branch.
+# Generates a PDF and uploads it as a build artifact.
+
+name: Release Notes on Merge
+
+on:
+  push:
+    branches: [main]
+    paths: ['release.json', 'examples/release.json']
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate PDF
+        run: |
+          INPUT="release.json"
+          [ ! -f "$INPUT" ] && INPUT="examples/release.json"
+
+          curl -s -X POST "${{ secrets.DOCFORGE_API_URL }}/v1/generate" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --argjson data "$(cat $INPUT)" '{
+              data: $data,
+              watermark: "INTERNAL",
+              verify: true
+            }')" \
+            -o release-notes.pdf
+
+          SIZE=$(wc -c < release-notes.pdf | tr -d ' ')
+          echo "Generated release-notes.pdf ($SIZE bytes)"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-notes-pdf
+          path: release-notes.pdf
+          retention-days: 30

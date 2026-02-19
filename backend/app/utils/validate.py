@@ -1,21 +1,18 @@
 """
 DocForge CLI — Input validation for release JSON payloads.
+
+Now delegates to Pydantic-based ReleaseModel for strict validation.
+Kept for backward compatibility with existing callers.
 """
 
 from typing import Any
+
+from app.errors import ValidationError
 
 
 REQUIRED_FIELDS = ["product_name", "version"]
 
 OPTIONAL_LIST_FIELDS = ["features", "fixes", "breaking_changes", "links"]
-
-
-class ValidationError(Exception):
-    """Raised when input JSON is missing required fields."""
-
-    def __init__(self, errors: list[str]):
-        self.errors = errors
-        super().__init__(f"Validation failed: {'; '.join(errors)}")
 
 
 def validate_release_payload(data: dict[str, Any]) -> dict[str, Any]:

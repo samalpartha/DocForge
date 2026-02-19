@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docforge.dev/schemas/release/1.0",
+  "title": "DocForge Release Notes Input",
+  "description": "Schema for release notes input data accepted by the DocForge CLI pipeline.",
+  "type": "object",
+  "required": ["product_name", "version"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "description": "Schema version identifier.",
+      "default": "1.0"
+    },
+    "product_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "description": "Name of the product or service."
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 50,
+      "pattern": "^[\\w\\.\\-\\+]+$",
+      "description": "Version string (semver, calver, or custom)."
+    },
+    "release_date": {
+      "type": "string",
+      "format": "date",
+      "description": "ISO 8601 date (YYYY-MM-DD). Defaults to today if omitted."
+    },
+    "summary": {
+      "type": "string",
+      "maxLength": 5000,
+      "description": "Executive summary of the release."
+    },
+    "features": {
+      "type": "array",
+      "maxItems": 50,
+      "items": { "$ref": "#/$defs/Feature" },
+      "description": "New features in this release."
+    },
+    "fixes": {
+      "type": "array",
+      "maxItems": 100,
+      "items": { "$ref": "#/$defs/Fix" },
+      "description": "Bug fixes in this release."
+    },
+    "breaking_changes": {
+      "type": "array",
+      "maxItems": 30,
+      "items": { "$ref": "#/$defs/BreakingChange" },
+      "description": "Breaking changes requiring user action."
+    },
+    "links": {
+      "type": "array",
+      "maxItems": 20,
+      "items": { "$ref": "#/$defs/Link" },
+      "description": "Useful links (changelog, migration guide, docs)."
+    },
+    "images": {
+      "type": "array",
+      "maxItems": 10,
+      "items": { "$ref": "#/$defs/Image" },
+      "description": "Images to embed in the generated PDF."
+    },
+    "attachments": {
+      "type": "array",
+      "maxItems": 5,
+      "items": { "$ref": "#/$defs/Attachment" },
+      "description": "Files to attach as appendices."
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "Feature": {
+      "type": "object",
+      "required": ["title", "description"],
+      "properties": {
+        "title":       { "type": "string", "minLength": 1, "maxLength": 200 },
+        "description": { "type": "string", "minLength": 1, "maxLength": 2000 }
+      },
+      "additionalProperties": false
+    },
+    "Fix": {
+      "type": "object",
+      "required": ["id", "title"],
+      "properties": {
+        "id":          { "type": "string", "minLength": 1, "maxLength": 50 },
+        "title":       { "type": "string", "minLength": 1, "maxLength": 200 },
+        "description": { "type": "string", "maxLength": 2000, "default": "" }
+      },
+      "additionalProperties": false
+    },
+    "BreakingChange": {
+      "type": "object",
+      "required": ["title", "description", "migration"],
+      "properties": {
+        "title":       { "type": "string", "minLength": 1, "maxLength": 200 },
+        "description": { "type": "string", "minLength": 1, "maxLength": 2000 },
+        "migration":   { "type": "string", "minLength": 1, "maxLength": 2000 }
+      },
+      "additionalProperties": false
+    },
+    "Link": {
+      "type": "object",
+      "required": ["label", "url"],
+      "properties": {
+        "label": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "url":   { "type": "string", "format": "uri", "maxLength": 2000 }
+      },
+      "additionalProperties": false
+    },
+    "Image": {
+      "type": "object",
+      "required": ["path"],
+      "properties": {
+        "path":          { "type": "string", "minLength": 1, "maxLength": 500 },
+        "caption":       { "type": "string", "maxLength": 500, "default": "" },
+        "width_percent": { "type": "integer", "minimum": 10, "maximum": 100, "default": 80 },
+        "placement":     { "type": "string", "enum": ["inline", "full_width"], "default": "inline" }
+      },
+      "additionalProperties": false
+    },
+    "Attachment": {
+      "type": "object",
+      "required": ["label", "path"],
+      "properties": {
+        "label": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "path":  { "type": "string", "minLength": 1, "maxLength": 500 },
+        "type":  { "type": "string", "enum": ["appendix", "embed"], "default": "appendix" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

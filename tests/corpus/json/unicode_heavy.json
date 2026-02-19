@@ -1,0 +1,19 @@
+{
+  "product_name": "Plataforma Acme (日本語テスト)",
+  "version": "3.0.0-beta.1",
+  "release_date": "2026-02-16",
+  "summary": "Cette version ajoute le support multilingue — включая русский, 中文, العربية, und Deutsch. Emojis: 🚀📊🔒",
+  "features": [
+    { "title": "Internationalisation (i18n)", "description": "Support für 12 Sprachen: English, Français, Deutsch, 日本語, 中文, 한국어, Español, Português, Русский, العربية, हिन्दी, Bahasa Indonesia" },
+    { "title": "Symboles spéciaux & caractères", "description": "Gestion correcte des caractères: <, >, &, \", ', ©, ®, ™, €, £, ¥, §, ¶, †, ‡, ‰, №" }
+  ],
+  "fixes": [
+    { "id": "BUG-日本", "title": "Encodage UTF-8 cassé pour les noms de fichiers", "description": "Les fichiers avec des caractères non-ASCII dans le nom étaient corrompus lors du téléchargement." }
+  ],
+  "breaking_changes": [
+    { "title": "Format de date changé en ISO 8601", "description": "Tous les champs de date utilisent maintenant le format ISO 8601 (YYYY-MM-DD).", "migration": "Mettez à jour votre parseur de dates pour accepter le format ISO 8601." }
+  ],
+  "links": [
+    { "label": "Guide de migration 移行ガイド", "url": "https://docs.acme.io/i18n/migration" }
+  ]
+}

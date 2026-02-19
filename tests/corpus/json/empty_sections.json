@@ -1,0 +1,10 @@
+{
+  "product_name": "Acme Platform",
+  "version": "2.4.0-rc.1",
+  "release_date": "2026-02-16",
+  "summary": "Release candidate with no new features, fixes, or breaking changes. Testing pipeline with empty sections.",
+  "features": [],
+  "fixes": [],
+  "breaking_changes": [],
+  "links": []
+}
