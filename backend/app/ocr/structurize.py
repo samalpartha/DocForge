@@ -198,39 +198,41 @@ def _gemini_structurize(text: str) -> Optional[dict]:
 
     try:
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        # Upgrade to Gemini 2.0 Flash
+        model = genai.GenerativeModel("gemini-2.0-flash")
 
         prompt = f"""
-        You are an expert technical writer and release engineer.
-        Target: Extract structured release note information from the following raw OCR text.
+        You are a world-class release engineer. 
+        Your task is to extract highly accurate structured JSON from raw OCR text of a product release or changelog.
 
-        Rules:
-        1. Output EXACTLY a JSON object. No markdown, no preamble.
-        2. Fields required:
-           - product_name: (string)
-           - version: (string, e.g. "1.2.0")
-           - release_date: (string, ISO format YYYY-MM-DD if found)
-           - summary: (string, 1-2 sentence overview)
-           - features: (list of objects with "title" and "description")
-           - fixes: (list of objects with "id", "title" and "description")
-           - breaking_changes: (list of objects with "title", "description", and "migration")
-           - links: (list of objects with "label" and "url")
+        STRICT REQUIREMENTS:
+        1. product_name: The name of the software or feature. Look at the very top.
+        2. version: The version number (e.g., "1.0.0", "v2.1", "2024.1"). DO NOT leave empty if any version string is visible.
+        3. release_date: The date of the release (YYYY-MM-DD). Use today's date if missing but context suggests it's a recent release.
+        4. features/fixes/breaking_changes: Categorize items accurately.
 
-        3. If a field is missing, return an empty string or empty list as appropriate.
-        4. Be precise with technical terms and bug IDs.
+        OUTPUT FORMAT:
+        Return ONLY valid JSON. No markdown backticks. No explanation.
 
-        OCR Text:
+        JSON Schema:
+        {{
+          "product_name": "string",
+          "version": "string",
+          "release_date": "string",
+          "summary": "string",
+          "features": [{{ "title": "string", "description": "string" }}],
+          "fixes": [{{ "id": "string", "title": "string", "description": "string" }}],
+          "breaking_changes": [{{ "title": "string", "description": "string", "migration": "string" }}],
+          "links": [{{ "label": "string", "url": "string" }}]
+        }}
+
+        OCR Text to parse:
         ---
         {text}
         ---
         """
 
-        response = model.generate_content(
-            prompt,
-            generation_config=genai.types.GenerationConfig(
-                response_mime_type="application/json",
-            ),
-        )
+        response = model.generate_content(prompt)
 
         if not response or not response.text:
             return None
