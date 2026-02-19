@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html class="dark" lang="en">
+
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>DocForge CLI | Automated PDF Release Notes</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -28,841 +31,975 @@
         }
     </script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
         .grid-pattern {
             background-image: radial-gradient(circle at 2px 2px, rgba(242, 105, 13, 0.05) 1px, transparent 0);
             background-size: 40px 40px;
         }
-        .glow-hover:hover { box-shadow: 0 0 20px rgba(242, 105, 13, 0.3); }
-        @keyframes pulse-border { 0%,100%{border-color:rgba(242,105,13,0.3)} 50%{border-color:rgba(242,105,13,0.8)} }
-        .step-active { animation: pulse-border 1.5s ease-in-out infinite; }
+
+        .glow-hover:hover {
+            box-shadow: 0 0 20px rgba(242, 105, 13, 0.3);
+        }
+
+        @keyframes pulse-border {
+
+            0%,
+            100% {
+                border-color: rgba(242, 105, 13, 0.3)
+            }
+
+            50% {
+                border-color: rgba(242, 105, 13, 0.8)
+            }
+        }
+
+        .step-active {
+            animation: pulse-border 1.5s ease-in-out infinite;
+        }
     </style>
 </head>
+
 <body class="bg-background-dark text-slate-100 selection:bg-primary selection:text-white">
 
-<!-- Navigation -->
-<nav class="sticky top-0 z-50 border-b border-border-dark bg-background-dark/80 backdrop-blur-md">
-    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-            <div class="size-8 bg-primary rounded-lg flex items-center justify-center">
-                <span class="material-symbols-outlined text-white">description</span>
-            </div>
-            <span class="text-xl font-bold tracking-tight">DocForge <span class="text-primary">CLI</span></span>
-        </div>
-        <div class="hidden md:flex items-center gap-8 text-sm font-medium">
-            <a class="hover:text-primary transition-colors" href="#howto">How to Use</a>
-            <a class="hover:text-primary transition-colors" href="#demo">Live Demo</a>
-            <a class="hover:text-primary transition-colors" href="#apis">Foxit APIs</a>
-            <a class="hover:text-primary transition-colors" href="#architecture">Architecture</a>
-            <a class="hover:text-primary transition-colors" href="#quickstart">Quick Start</a>
-        </div>
-        <a class="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-border-dark hover:bg-white/10 transition-all" href="https://github.com/docforge/docforge-cli">
-            <span class="material-symbols-outlined text-sm">terminal</span>
-            <span class="text-sm font-semibold">GitHub</span>
-        </a>
-    </div>
-</nav>
-
-<!-- Hero -->
-<section class="relative pt-16 pb-12 overflow-hidden grid-pattern">
-    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[400px] bg-primary/10 blur-[120px] rounded-full pointer-events-none"></div>
-    <div class="max-w-7xl mx-auto px-6 text-center">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest mb-6">
-            <span class="relative flex h-2 w-2">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-            </span>
-            Powered by Foxit Document Generation + PDF Services APIs
-        </div>
-        <h1 class="text-5xl md:text-7xl font-black tracking-tight leading-[1.1] mb-6">
-            Verified PDFs from<br/><span class="text-primary">JSON, Images, or Scans</span>
-        </h1>
-        <p class="max-w-2xl mx-auto text-lg text-slate-400 mb-8 leading-relaxed">
-            JSON, LaTeX, screenshots, or scanned documents — DocForge turns any input into a watermarked, verified, production-ready PDF. Two engines, OCR ingestion, 7-check verification, all powered by Foxit APIs.
-        </p>
-        <a href="#demo" class="inline-flex px-8 py-4 bg-primary text-white font-bold rounded-lg glow-hover transition-all items-center gap-2">
-            Try Live Demo <span class="material-symbols-outlined">arrow_downward</span>
-        </a>
-    </div>
-</section>
-
-<!-- ===== HOW TO USE ===== -->
-<section class="py-20 border-b border-border-dark" id="howto">
-    <div class="max-w-6xl mx-auto px-6">
-        <div class="text-center mb-14">
-            <h2 class="text-3xl font-bold mb-3">How to Use DocForge</h2>
-            <p class="text-slate-400 max-w-xl mx-auto">Four modes, two engines, one pipeline. Pick whichever fits your workflow.</p>
-        </div>
-
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-            <!-- Path A: Web Demo -->
-            <div class="rounded-2xl border border-border-dark bg-card-dark/50 p-8">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="size-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-primary">language</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-lg">Web Demo</h3>
-                        <p class="text-xs text-slate-500">No install required</p>
-                    </div>
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-50 border-b border-border-dark bg-background-dark/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="size-8 bg-primary rounded-lg flex items-center justify-center">
+                    <span class="material-symbols-outlined text-white">description</span>
                 </div>
-                <ol class="space-y-5">
-                    <li class="flex gap-4">
-                        <span class="size-7 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
-                        <div>
-                            <p class="font-semibold text-sm">Prepare your JSON</p>
-                            <p class="text-xs text-slate-500 mt-1">Create a JSON file with <code class="text-primary">product_name</code>, <code class="text-primary">version</code>, <code class="text-primary">features</code>, <code class="text-primary">fixes</code>, and <code class="text-primary">breaking_changes</code>. Or use our example below.</p>
-                        </div>
-                    </li>
-                    <li class="flex gap-4">
-                        <span class="size-7 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
-                        <div>
-                            <p class="font-semibold text-sm">Paste into the demo</p>
-                            <p class="text-xs text-slate-500 mt-1">Scroll to the <a href="#demo" class="text-primary hover:underline">Live Demo</a> section. Switch between 4 modes: JSON, Image, or Scan input. Choose engine, watermark, and password.</p>
-                        </div>
-                    </li>
-                    <li class="flex gap-4">
-                        <span class="size-7 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
-                        <div>
-                            <p class="font-semibold text-sm">Click Generate</p>
-                            <p class="text-xs text-slate-500 mt-1">Watch the 5-step pipeline progress, see verification results (7 checks), and step timings — all in real time.</p>
-                        </div>
-                    </li>
-                    <li class="flex gap-4">
-                        <span class="size-7 rounded-full bg-green-500 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
-                        <div>
-                            <p class="font-semibold text-sm">Download verified PDF</p>
-                            <p class="text-xs text-slate-500 mt-1">A watermarked, flattened, verified PDF with full job metadata (SHA-256 hash, step durations). No data is stored.</p>
-                        </div>
-                    </li>
-                </ol>
+                <span class="text-xl font-bold tracking-tight">DocForge <span class="text-primary">CLI</span></span>
+            </div>
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+                <a class="hover:text-primary transition-colors" href="#howto">How to Use</a>
+                <a class="hover:text-primary transition-colors" href="#demo">Live Demo</a>
+                <a class="hover:text-primary transition-colors" href="#apis">Foxit APIs</a>
+                <a class="hover:text-primary transition-colors" href="#architecture">Architecture</a>
+                <a class="hover:text-primary transition-colors" href="#quickstart">Quick Start</a>
+            </div>
+            <a class="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-border-dark hover:bg-white/10 transition-all"
+                href="https://github.com/docforge/docforge-cli">
+                <span class="material-symbols-outlined text-sm">terminal</span>
+                <span class="text-sm font-semibold">GitHub</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="relative pt-16 pb-12 overflow-hidden grid-pattern">
+        <div
+            class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[400px] bg-primary/10 blur-[120px] rounded-full pointer-events-none">
+        </div>
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <div
+                class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest mb-6">
+                <span class="relative flex h-2 w-2">
+                    <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                </span>
+                Powered by Foxit Document Generation + PDF Services APIs
+            </div>
+            <h1 class="text-5xl md:text-7xl font-black tracking-tight leading-[1.1] mb-6">
+                Verified PDFs from<br /><span class="text-primary">JSON, Images, or Scans</span>
+            </h1>
+            <p class="max-w-2xl mx-auto text-lg text-slate-400 mb-8 leading-relaxed">
+                JSON, LaTeX, screenshots, or scanned documents — DocForge turns any input into a watermarked, verified,
+                production-ready PDF. Two engines, OCR ingestion, 7-check verification, all powered by Foxit APIs.
+            </p>
+            <a href="#demo"
+                class="inline-flex px-8 py-4 bg-primary text-white font-bold rounded-lg glow-hover transition-all items-center gap-2">
+                Try Live Demo <span class="material-symbols-outlined">arrow_downward</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ===== HOW TO USE ===== -->
+    <section class="py-20 border-b border-border-dark" id="howto">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-14">
+                <h2 class="text-3xl font-bold mb-3">How to Use DocForge</h2>
+                <p class="text-slate-400 max-w-xl mx-auto">Four modes, two engines, one pipeline. Pick whichever fits
+                    your workflow.</p>
             </div>
 
-            <!-- Path B: CLI -->
-            <div class="rounded-2xl border border-border-dark bg-card-dark/50 p-8">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="size-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-primary">terminal</span>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-lg">CLI / CI Pipeline</h3>
-                        <p class="text-xs text-slate-500">For automation & GitHub Actions</p>
-                    </div>
-                </div>
-                <ol class="space-y-5">
-                    <li class="flex gap-4">
-                        <span class="size-7 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
-                        <div>
-                            <p class="font-semibold text-sm">Install & configure</p>
-                            <p class="text-xs text-slate-500 mt-1">Clone the repo, run <code class="text-primary">make setup</code>, and add your Foxit API keys to <code class="text-primary">backend/.env</code>.</p>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+                <!-- Path A: Web Demo -->
+                <div class="rounded-2xl border border-border-dark bg-card-dark/50 p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="size-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary">language</span>
                         </div>
-                    </li>
-                    <li class="flex gap-4">
-                        <span class="size-7 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
                         <div>
-                            <p class="font-semibold text-sm">Start the backend</p>
-                            <p class="text-xs text-slate-500 mt-1">Run <code class="text-primary">make backend</code> to start the FastAPI server. It validates your credentials on startup.</p>
+                            <h3 class="font-bold text-lg">Web Demo</h3>
+                            <p class="text-xs text-slate-500">No install required</p>
                         </div>
-                    </li>
-                    <li class="flex gap-4">
-                        <span class="size-7 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
-                        <div>
-                            <p class="font-semibold text-sm">Run the generate command</p>
-                            <div class="mt-2 bg-black/40 rounded-lg p-3 font-mono text-xs text-slate-300">
-                                docforge generate release.json \<br/>
-                                &nbsp;&nbsp;--engine latex --watermark DRAFT \<br/>
-                                &nbsp;&nbsp;--password s3cret --verify --open
+                    </div>
+                    <ol class="space-y-5">
+                        <li class="flex gap-4">
+                            <span
+                                class="size-7 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+                            <div>
+                                <p class="font-semibold text-sm">Prepare your JSON</p>
+                                <p class="text-xs text-slate-500 mt-1">Create a JSON file with <code
+                                        class="text-primary">product_name</code>, <code
+                                        class="text-primary">version</code>, <code class="text-primary">features</code>,
+                                    <code class="text-primary">fixes</code>, and <code
+                                        class="text-primary">breaking_changes</code>. Or use our example below.</p>
                             </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <span
+                                class="size-7 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+                            <div>
+                                <p class="font-semibold text-sm">Paste into the demo</p>
+                                <p class="text-xs text-slate-500 mt-1">Scroll to the <a href="#demo"
+                                        class="text-primary hover:underline">Live Demo</a> section. Switch between 4
+                                    modes: JSON, Image, or Scan input. Choose engine, watermark, and password.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <span
+                                class="size-7 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+                            <div>
+                                <p class="font-semibold text-sm">Click Generate</p>
+                                <p class="text-xs text-slate-500 mt-1">Watch the 5-step pipeline progress, see
+                                    verification results (7 checks), and step timings — all in real time.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <span
+                                class="size-7 rounded-full bg-green-500 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
+                            <div>
+                                <p class="font-semibold text-sm">Download verified PDF</p>
+                                <p class="text-xs text-slate-500 mt-1">A watermarked, flattened, verified PDF with full
+                                    job metadata (SHA-256 hash, step durations). No data is stored.</p>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+
+                <!-- Path B: CLI -->
+                <div class="rounded-2xl border border-border-dark bg-card-dark/50 p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="size-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary">terminal</span>
                         </div>
-                    </li>
-                    <li class="flex gap-4">
-                        <span class="size-7 rounded-full bg-green-500 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
                         <div>
-                            <p class="font-semibold text-sm">Verified PDF saved to disk</p>
-                            <p class="text-xs text-slate-500 mt-1">CLI prints output path, size, verification (7/7 checks), step timings, and SHA-256 hash. Use <code class="text-primary">--open</code> to view instantly. 3 GitHub Actions templates included.</p>
+                            <h3 class="font-bold text-lg">CLI / CI Pipeline</h3>
+                            <p class="text-xs text-slate-500">For automation & GitHub Actions</p>
                         </div>
-                    </li>
-                </ol>
+                    </div>
+                    <ol class="space-y-5">
+                        <li class="flex gap-4">
+                            <span
+                                class="size-7 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+                            <div>
+                                <p class="font-semibold text-sm">Install & configure</p>
+                                <p class="text-xs text-slate-500 mt-1">Clone the repo, run <code
+                                        class="text-primary">make setup</code>, and add your Foxit API keys to <code
+                                        class="text-primary">backend/.env</code>.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <span
+                                class="size-7 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+                            <div>
+                                <p class="font-semibold text-sm">Start the backend</p>
+                                <p class="text-xs text-slate-500 mt-1">Run <code
+                                        class="text-primary">make backend</code> to start the FastAPI server. It
+                                    validates your credentials on startup.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <span
+                                class="size-7 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+                            <div>
+                                <p class="font-semibold text-sm">Run the generate command</p>
+                                <div class="mt-2 bg-black/40 rounded-lg p-3 font-mono text-xs text-slate-300">
+                                    docforge generate release.json \<br />
+                                    &nbsp;&nbsp;--engine latex --watermark DRAFT \<br />
+                                    &nbsp;&nbsp;--password s3cret --verify --open
+                                </div>
+                            </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <span
+                                class="size-7 rounded-full bg-green-500 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
+                            <div>
+                                <p class="font-semibold text-sm">Verified PDF saved to disk</p>
+                                <p class="text-xs text-slate-500 mt-1">CLI prints output path, size, verification (7/7
+                                    checks), step timings, and SHA-256 hash. Use <code
+                                        class="text-primary">--open</code> to view instantly. 3 GitHub Actions templates
+                                    included.</p>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+
+                <!-- Path C: LaTeX Advanced -->
+                <div
+                    class="rounded-2xl border border-primary/30 bg-card-dark/50 p-8 md:col-span-2 lg:col-span-1 relative overflow-hidden">
+                    <div
+                        class="absolute top-3 right-3 bg-primary/20 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                        Advanced</div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="size-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary">science</span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg">LaTeX Engine</h3>
+                            <p class="text-xs text-slate-500">For research &amp; engineering teams</p>
+                        </div>
+                    </div>
+                    <ol class="space-y-5">
+                        <li class="flex gap-4">
+                            <span
+                                class="size-7 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+                            <div>
+                                <p class="font-semibold text-sm">Same JSON input</p>
+                                <p class="text-xs text-slate-500 mt-1">Use the exact same release JSON. No extra
+                                    formatting needed — variables are auto-injected into a LaTeX template.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <span
+                                class="size-7 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+                            <div>
+                                <p class="font-semibold text-sm">Select LaTeX engine</p>
+                                <p class="text-xs text-slate-500 mt-1">In the demo, choose <strong
+                                        class="text-primary">LaTeX (tectonic)</strong> from the Engine dropdown. In CLI:
+                                    <code class="text-primary">--engine latex</code>.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <span
+                                class="size-7 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+                            <div>
+                                <p class="font-semibold text-sm">Tectonic compiles PDF</p>
+                                <p class="text-xs text-slate-500 mt-1">A sandboxed tectonic build produces a typeset PDF
+                                    with precise tables, headers/footers, and professional formatting.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-4">
+                            <span
+                                class="size-7 rounded-full bg-green-500 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
+                            <div>
+                                <p class="font-semibold text-sm">Foxit post-processing</p>
+                                <p class="text-xs text-slate-500 mt-1">The PDF still passes through <strong>Foxit PDF
+                                        Services API</strong> for watermarking, flattening, and optional password
+                                    protection.</p>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
             </div>
 
-            <!-- Path C: LaTeX Advanced -->
-            <div class="rounded-2xl border border-primary/30 bg-card-dark/50 p-8 md:col-span-2 lg:col-span-1 relative overflow-hidden">
-                <div class="absolute top-3 right-3 bg-primary/20 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Advanced</div>
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="size-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-primary">science</span>
+            <!-- JSON Schema Reference -->
+            <div class="mt-12 rounded-2xl border border-border-dark bg-card-dark/50 p-8">
+                <h3 class="font-bold text-lg mb-4">Input JSON Fields</h3>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+                    <div class="flex items-start gap-2">
+                        <span class="text-red-400 text-xs mt-1 font-bold">REQ</span>
+                        <div><code class="text-primary">product_name</code> <span class="text-slate-500">— Product name
+                                (e.g. "Acme Platform")</span></div>
                     </div>
-                    <div>
-                        <h3 class="font-bold text-lg">LaTeX Engine</h3>
-                        <p class="text-xs text-slate-500">For research &amp; engineering teams</p>
+                    <div class="flex items-start gap-2">
+                        <span class="text-red-400 text-xs mt-1 font-bold">REQ</span>
+                        <div><code class="text-primary">version</code> <span class="text-slate-500">— Release version
+                                (e.g. "2.4.0")</span></div>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="text-slate-600 text-xs mt-1 font-bold">OPT</span>
+                        <div><code class="text-primary">release_date</code> <span class="text-slate-500">— ISO date
+                                (defaults to today)</span></div>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="text-slate-600 text-xs mt-1 font-bold">OPT</span>
+                        <div><code class="text-primary">summary</code> <span class="text-slate-500">— Release summary
+                                paragraph</span></div>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="text-slate-600 text-xs mt-1 font-bold">OPT</span>
+                        <div><code class="text-primary">features[]</code> <span class="text-slate-500">— Array of
+                                {title, description}</span></div>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="text-slate-600 text-xs mt-1 font-bold">OPT</span>
+                        <div><code class="text-primary">fixes[]</code> <span class="text-slate-500">— Array of {id,
+                                title, description}</span></div>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="text-slate-600 text-xs mt-1 font-bold">OPT</span>
+                        <div><code class="text-primary">breaking_changes[]</code> <span class="text-slate-500">— Array
+                                of {title, description, migration}</span></div>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="text-slate-600 text-xs mt-1 font-bold">OPT</span>
+                        <div><code class="text-primary">links[]</code> <span class="text-slate-500">— Array of {label,
+                                url}</span></div>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="text-slate-600 text-xs mt-1 font-bold">OPT</span>
+                        <div><code class="text-primary">images[]</code> <span class="text-slate-500">— Array of {path,
+                                caption, alt_text}</span></div>
+                    </div>
+                    <div class="flex items-start gap-2">
+                        <span class="text-slate-600 text-xs mt-1 font-bold">OPT</span>
+                        <div><code class="text-primary">attachments[]</code> <span class="text-slate-500">— Array of
+                                {path, description}</span></div>
                     </div>
                 </div>
-                <ol class="space-y-5">
-                    <li class="flex gap-4">
-                        <span class="size-7 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
-                        <div>
-                            <p class="font-semibold text-sm">Same JSON input</p>
-                            <p class="text-xs text-slate-500 mt-1">Use the exact same release JSON. No extra formatting needed — variables are auto-injected into a LaTeX template.</p>
-                        </div>
-                    </li>
-                    <li class="flex gap-4">
-                        <span class="size-7 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
-                        <div>
-                            <p class="font-semibold text-sm">Select LaTeX engine</p>
-                            <p class="text-xs text-slate-500 mt-1">In the demo, choose <strong class="text-primary">LaTeX (tectonic)</strong> from the Engine dropdown. In CLI: <code class="text-primary">--engine latex</code>.</p>
-                        </div>
-                    </li>
-                    <li class="flex gap-4">
-                        <span class="size-7 rounded-full bg-primary text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
-                        <div>
-                            <p class="font-semibold text-sm">Tectonic compiles PDF</p>
-                            <p class="text-xs text-slate-500 mt-1">A sandboxed tectonic build produces a typeset PDF with precise tables, headers/footers, and professional formatting.</p>
-                        </div>
-                    </li>
-                    <li class="flex gap-4">
-                        <span class="size-7 rounded-full bg-green-500 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
-                        <div>
-                            <p class="font-semibold text-sm">Foxit post-processing</p>
-                            <p class="text-xs text-slate-500 mt-1">The PDF still passes through <strong>Foxit PDF Services API</strong> for watermarking, flattening, and optional password protection.</p>
-                        </div>
-                    </li>
-                </ol>
+                <p class="text-xs text-slate-600 mt-4">Missing optional fields gracefully show "None" in the output PDF.
+                    New: <code class="text-primary">images</code> and <code class="text-primary">attachments</code>
+                    support with security validation.</p>
             </div>
         </div>
+    </section>
 
-        <!-- JSON Schema Reference -->
-        <div class="mt-12 rounded-2xl border border-border-dark bg-card-dark/50 p-8">
-            <h3 class="font-bold text-lg mb-4">Input JSON Fields</h3>
-            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                <div class="flex items-start gap-2">
-                    <span class="text-red-400 text-xs mt-1 font-bold">REQ</span>
-                    <div><code class="text-primary">product_name</code> <span class="text-slate-500">— Product name (e.g. "Acme Platform")</span></div>
-                </div>
-                <div class="flex items-start gap-2">
-                    <span class="text-red-400 text-xs mt-1 font-bold">REQ</span>
-                    <div><code class="text-primary">version</code> <span class="text-slate-500">— Release version (e.g. "2.4.0")</span></div>
-                </div>
-                <div class="flex items-start gap-2">
-                    <span class="text-slate-600 text-xs mt-1 font-bold">OPT</span>
-                    <div><code class="text-primary">release_date</code> <span class="text-slate-500">— ISO date (defaults to today)</span></div>
-                </div>
-                <div class="flex items-start gap-2">
-                    <span class="text-slate-600 text-xs mt-1 font-bold">OPT</span>
-                    <div><code class="text-primary">summary</code> <span class="text-slate-500">— Release summary paragraph</span></div>
-                </div>
-                <div class="flex items-start gap-2">
-                    <span class="text-slate-600 text-xs mt-1 font-bold">OPT</span>
-                    <div><code class="text-primary">features[]</code> <span class="text-slate-500">— Array of {title, description}</span></div>
-                </div>
-                <div class="flex items-start gap-2">
-                    <span class="text-slate-600 text-xs mt-1 font-bold">OPT</span>
-                    <div><code class="text-primary">fixes[]</code> <span class="text-slate-500">— Array of {id, title, description}</span></div>
-                </div>
-                <div class="flex items-start gap-2">
-                    <span class="text-slate-600 text-xs mt-1 font-bold">OPT</span>
-                    <div><code class="text-primary">breaking_changes[]</code> <span class="text-slate-500">— Array of {title, description, migration}</span></div>
-                </div>
-                <div class="flex items-start gap-2">
-                    <span class="text-slate-600 text-xs mt-1 font-bold">OPT</span>
-                    <div><code class="text-primary">links[]</code> <span class="text-slate-500">— Array of {label, url}</span></div>
-                </div>
-                <div class="flex items-start gap-2">
-                    <span class="text-slate-600 text-xs mt-1 font-bold">OPT</span>
-                    <div><code class="text-primary">images[]</code> <span class="text-slate-500">— Array of {path, caption, alt_text}</span></div>
-                </div>
-                <div class="flex items-start gap-2">
-                    <span class="text-slate-600 text-xs mt-1 font-bold">OPT</span>
-                    <div><code class="text-primary">attachments[]</code> <span class="text-slate-500">— Array of {path, description}</span></div>
-                </div>
+    <!-- ===== LIVE DEMO SECTION ===== -->
+    <section class="py-20 border-y border-border-dark bg-card-dark/30" id="demo">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-3">Live Demo: Input → Output</h2>
+                <p class="text-slate-400">Four modes — all powered by Foxit PDF Services API for post-processing.</p>
             </div>
-            <p class="text-xs text-slate-600 mt-4">Missing optional fields gracefully show "None" in the output PDF. New: <code class="text-primary">images</code> and <code class="text-primary">attachments</code> support with security validation.</p>
-        </div>
-    </div>
-</section>
 
-<!-- ===== LIVE DEMO SECTION ===== -->
-<section class="py-20 border-y border-border-dark bg-card-dark/30" id="demo">
-    <div class="max-w-6xl mx-auto px-6">
-        <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold mb-3">Live Demo: Input → Output</h2>
-            <p class="text-slate-400">Four modes — all powered by Foxit PDF Services API for post-processing.</p>
-        </div>
-
-        <!-- Mode Tabs -->
-        <div class="flex flex-wrap gap-2 mb-6 justify-center" id="demoModeTabs">
-            <button onclick="setDemoMode('release')" class="demo-tab px-4 py-2 text-xs font-bold rounded-lg bg-primary text-white" data-mode="release">
-                <span class="material-symbols-outlined text-sm align-middle mr-1">description</span>JSON → PDF
-            </button>
-            <button onclick="setDemoMode('image')" class="demo-tab px-4 py-2 text-xs font-bold rounded-lg bg-white/5 text-slate-400 border border-border-dark" data-mode="image">
-                <span class="material-symbols-outlined text-sm align-middle mr-1">image</span>Image → PDF
-            </button>
-            <button onclick="setDemoMode('ocr')" class="demo-tab px-4 py-2 text-xs font-bold rounded-lg bg-white/5 text-slate-400 border border-border-dark" data-mode="ocr">
-                <span class="material-symbols-outlined text-sm align-middle mr-1">document_scanner</span>Scan → JSON → PDF
-            </button>
-        </div>
-
-        <div class="grid lg:grid-cols-2 gap-8">
-            <!-- Left: Input -->
-            <div>
-                <!-- === RELEASE MODE INPUT === -->
-                <div id="releaseModeInput">
-                <!-- Mode toggle + Preset selector -->
-                <div class="flex items-center justify-between mb-3">
-                    <div class="flex items-center gap-2">
-                        <button onclick="setInputMode('form')" id="modeFormBtn" class="px-3 py-1 text-xs font-bold rounded-lg bg-primary text-white">Form</button>
-                        <button onclick="setInputMode('json')" id="modeJsonBtn" class="px-3 py-1 text-xs font-bold rounded-lg bg-white/5 text-slate-400 border border-border-dark">JSON</button>
-                    </div>
-                    <select onchange="loadPreset(this.value)" class="bg-black/40 border border-border-dark rounded-lg px-3 py-1 text-xs text-slate-400">
-                        <option value="default">Preset: Product Release</option>
-                        <option value="security">Security Advisory</option>
-                        <option value="api">API Release</option>
-                        <option value="hotfix">Hotfix</option>
-                    </select>
-                </div>
-
-                <!-- Form Mode -->
-                <div id="formMode" class="space-y-3 rounded-xl bg-black/40 border border-border-dark p-4 max-h-[420px] overflow-y-auto">
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs text-slate-500 font-semibold">Product Name <span class="text-red-400">*</span></label>
-                            <input id="fProductName" type="text" value="Acme Platform" oninput="syncFormToJson()"
-                                class="w-full mt-1 bg-black/30 border border-border-dark rounded-lg px-3 py-1.5 text-sm text-slate-300 focus:border-primary focus:ring-1 focus:ring-primary"/>
-                        </div>
-                        <div>
-                            <label class="text-xs text-slate-500 font-semibold">Version <span class="text-red-400">*</span></label>
-                            <input id="fVersion" type="text" value="2.4.0" oninput="syncFormToJson()"
-                                class="w-full mt-1 bg-black/30 border border-border-dark rounded-lg px-3 py-1.5 text-sm text-slate-300 focus:border-primary focus:ring-1 focus:ring-primary"/>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="text-xs text-slate-500 font-semibold">Release Date</label>
-                            <input id="fDate" type="date" value="2026-02-16" oninput="syncFormToJson()"
-                                class="w-full mt-1 bg-black/30 border border-border-dark rounded-lg px-3 py-1.5 text-sm text-slate-300 focus:border-primary focus:ring-1 focus:ring-primary"/>
-                        </div>
-                        <div></div>
-                    </div>
-                    <div>
-                        <label class="text-xs text-slate-500 font-semibold">Summary</label>
-                        <textarea id="fSummary" rows="2" oninput="syncFormToJson()"
-                            class="w-full mt-1 bg-black/30 border border-border-dark rounded-lg px-3 py-1.5 text-sm text-slate-300 focus:border-primary focus:ring-1 focus:ring-primary resize-none">This release introduces real-time collaboration and critical auth fixes.</textarea>
-                    </div>
-                    <div>
-                        <div class="flex items-center justify-between">
-                            <label class="text-xs text-slate-500 font-semibold">Features</label>
-                            <button onclick="addListItem('features')" class="text-xs text-primary hover:underline">+ Add</button>
-                        </div>
-                        <div id="featuresList" class="space-y-2 mt-2"></div>
-                    </div>
-                    <div>
-                        <div class="flex items-center justify-between">
-                            <label class="text-xs text-slate-500 font-semibold">Bug Fixes</label>
-                            <button onclick="addListItem('fixes')" class="text-xs text-primary hover:underline">+ Add</button>
-                        </div>
-                        <div id="fixesList" class="space-y-2 mt-2"></div>
-                    </div>
-                    <div>
-                        <div class="flex items-center justify-between">
-                            <label class="text-xs text-red-400 font-semibold">Breaking Changes</label>
-                            <button onclick="addListItem('breaking')" class="text-xs text-primary hover:underline">+ Add</button>
-                        </div>
-                        <div id="breakingList" class="space-y-2 mt-2"></div>
-                    </div>
-                </div>
-
-                <!-- JSON Mode (hidden by default) -->
-                <textarea id="jsonInput" rows="16" spellcheck="false" style="display:none"
-                    class="w-full rounded-xl bg-black/40 border border-border-dark p-4 font-mono text-xs text-slate-300 focus:border-primary focus:ring-1 focus:ring-primary resize-none"
-                    placeholder='{ "product_name": "...", "version": "...", ... }'></textarea>
-
-                <div class="flex flex-wrap gap-3 mt-4">
-                    <label class="flex items-center gap-2 text-sm text-slate-400">
-                        <span>Engine:</span>
-                        <select id="engineSelect" class="bg-black/40 border border-border-dark rounded-lg px-3 py-1.5 text-sm font-mono text-slate-300">
-                            <option value="docgen">Foxit Doc Gen API</option>
-                            <option value="latex">LaTeX (tectonic)</option>
-                        </select>
-                    </label>
-                    <label class="flex items-center gap-2 text-sm text-slate-400">
-                        <span>Watermark:</span>
-                        <select id="watermarkSelect" class="bg-black/40 border border-border-dark rounded-lg px-3 py-1.5 text-sm font-mono text-slate-300">
-                            <option value="INTERNAL">INTERNAL</option>
-                            <option value="DRAFT">DRAFT</option>
-                            <option value="CONFIDENTIAL">CONFIDENTIAL</option>
-                        </select>
-                    </label>
-                    <label class="flex items-center gap-2 text-sm text-slate-400">
-                        <input type="checkbox" id="passwordCheck" class="rounded border-border-dark bg-black/40 text-primary focus:ring-primary"/>
-                        <span>Password-protect</span>
-                    </label>
-                </div>
-
-                <button onclick="runGenerate()" id="generateBtn"
-                    class="mt-4 w-full px-6 py-3 bg-primary text-white font-bold rounded-lg glow-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-sm">play_arrow</span>
-                    Generate PDF
+            <!-- Mode Tabs -->
+            <div class="flex flex-wrap gap-2 mb-6 justify-center" id="demoModeTabs">
+                <button onclick="setDemoMode('release')"
+                    class="demo-tab px-4 py-2 text-xs font-bold rounded-lg bg-primary text-white" data-mode="release">
+                    <span class="material-symbols-outlined text-sm align-middle mr-1">description</span>JSON → PDF
                 </button>
-                </div><!-- end releaseModeInput -->
-
-                <!-- === IMAGE MODE INPUT === -->
-                <div id="imageModeInput" style="display:none">
-                    <div class="rounded-xl bg-black/40 border border-border-dark p-6 text-center">
-                        <span class="material-symbols-outlined text-4xl text-primary mb-3">cloud_upload</span>
-                        <p class="font-bold text-sm mb-2">Upload Images</p>
-                        <p class="text-xs text-slate-500 mb-4">JPG, PNG, or GIF — up to 10MB per file</p>
-                        <input type="file" id="imageFiles" accept="image/*" multiple
-                            class="block w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"/>
-                    </div>
-                    <div class="flex flex-wrap gap-3 mt-4">
-                        <label class="flex items-center gap-2 text-sm text-slate-400">
-                            <span>Watermark:</span>
-                            <select id="imgWatermark" class="bg-black/40 border border-border-dark rounded-lg px-3 py-1.5 text-sm font-mono text-slate-300">
-                                <option value="INTERNAL">INTERNAL</option>
-                                <option value="DRAFT">DRAFT</option>
-                                <option value="CONFIDENTIAL">CONFIDENTIAL</option>
-                            </select>
-                        </label>
-                    </div>
-                    <button onclick="runImageToPdf()" id="imgGenBtn"
-                        class="mt-4 w-full px-6 py-3 bg-primary text-white font-bold rounded-lg glow-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-                        <span class="material-symbols-outlined text-sm">image</span>
-                        Convert to PDF
-                    </button>
-                </div>
-
-                <!-- === OCR MODE INPUT === -->
-                <div id="ocrModeInput" style="display:none">
-                    <div class="rounded-xl bg-black/40 border border-border-dark p-6 text-center" id="ocrUploadArea">
-                        <span class="material-symbols-outlined text-4xl text-primary mb-3">document_scanner</span>
-                        <p class="font-bold text-sm mb-2">Upload Screenshot or Scanned Doc</p>
-                        <p class="text-xs text-slate-500 mb-4">Upload an image of release notes — OCR will extract text and build a JSON draft</p>
-                        <input type="file" id="ocrFile" accept="image/*,.pdf"
-                            class="block w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"/>
-                    </div>
-                    <button onclick="runOcrExtract()" id="ocrExtractBtn"
-                        class="mt-4 w-full px-6 py-3 bg-primary text-white font-bold rounded-lg glow-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
-                        <span class="material-symbols-outlined text-sm">document_scanner</span>
-                        Extract Text (OCR)
-                    </button>
-
-                    <!-- OCR Review Panel (shown after extraction) -->
-                    <div id="ocrReviewPanel" style="display:none" class="mt-4">
-                        <div class="rounded-xl bg-black/40 border border-primary/30 p-4">
-                            <div class="flex items-center justify-between mb-3">
-                                <p class="font-bold text-sm text-primary">Extracted Draft</p>
-                                <span class="text-xs px-2 py-0.5 rounded-full" id="ocrConfBadge">—</span>
-                            </div>
-                            <div id="ocrWarnings" class="mb-2"></div>
-                            <textarea id="ocrDraftJson" rows="10" spellcheck="false"
-                                class="w-full rounded-lg bg-black/30 border border-border-dark p-3 font-mono text-xs text-slate-300 focus:border-primary focus:ring-1 focus:ring-primary resize-none"></textarea>
-                            <button onclick="ocrToPipeline()" id="ocrGenerateBtn"
-                                class="mt-3 w-full px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-500 transition-all flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined text-sm">play_arrow</span>
-                                Generate PDF from Draft
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <p class="mt-3 text-xs text-slate-600 text-center">
-                    <span class="material-symbols-outlined text-xs align-middle">shield</span>
-                    No data is stored. Files are processed in memory and discarded after output is generated.
-                </p>
+                <button onclick="setDemoMode('image')"
+                    class="demo-tab px-4 py-2 text-xs font-bold rounded-lg bg-white/5 text-slate-400 border border-border-dark"
+                    data-mode="image">
+                    <span class="material-symbols-outlined text-sm align-middle mr-1">image</span>Image → PDF
+                </button>
+                <button onclick="setDemoMode('ocr')"
+                    class="demo-tab px-4 py-2 text-xs font-bold rounded-lg bg-white/5 text-slate-400 border border-border-dark"
+                    data-mode="ocr">
+                    <span class="material-symbols-outlined text-sm align-middle mr-1">document_scanner</span>Scan → JSON
+                    → PDF
+                </button>
             </div>
 
-            <!-- Right: Pipeline Steps + Output -->
-            <div>
-                <h3 class="font-bold text-sm uppercase tracking-widest text-slate-400 mb-3">Pipeline Progress</h3>
-                <div class="rounded-xl bg-black/40 border border-border-dark p-6 space-y-4" id="pipelinePanel">
-                    <div class="flex items-center gap-4" id="step1">
-                        <div class="size-8 rounded-full border-2 border-border-dark flex items-center justify-center text-xs font-bold text-slate-500 shrink-0" id="step1icon">1</div>
-                        <div>
-                            <p class="font-semibold text-sm text-slate-400">Validate Input JSON</p>
-                            <p class="text-xs text-slate-600" id="step1detail">Waiting...</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-4" id="step2">
-                        <div class="size-8 rounded-full border-2 border-border-dark flex items-center justify-center text-xs font-bold text-slate-500 shrink-0" id="step2icon">2</div>
-                        <div>
-                            <p class="font-semibold text-sm text-slate-400">Generate PDF <span class="text-primary font-normal">(Document Generation API)</span></p>
-                            <p class="text-xs text-slate-600" id="step2detail">Waiting...</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-4" id="step3">
-                        <div class="size-8 rounded-full border-2 border-border-dark flex items-center justify-center text-xs font-bold text-slate-500 shrink-0" id="step3icon">3</div>
-                        <div>
-                            <p class="font-semibold text-sm text-slate-400">Process PDF <span class="text-primary font-normal">(PDF Services API)</span></p>
-                            <p class="text-xs text-slate-600" id="step3detail">Watermark → Flatten → Protect</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-4" id="step4">
-                        <div class="size-8 rounded-full border-2 border-border-dark flex items-center justify-center text-xs font-bold text-slate-500 shrink-0" id="step4icon">4</div>
-                        <div>
-                            <p class="font-semibold text-sm text-slate-400">Deliver Output</p>
-                            <p class="text-xs text-slate-600" id="step4detail">Waiting...</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Result area -->
-                <div id="resultArea" class="mt-4 hidden">
-                    <div class="rounded-xl bg-green-500/10 border border-green-500/30 p-4 flex items-center gap-4">
-                        <span class="material-symbols-outlined text-green-400 text-3xl">check_circle</span>
-                        <div class="flex-1">
-                            <p class="font-bold text-green-400" id="resultTitle">PDF Generated!</p>
-                            <p class="text-xs text-slate-400" id="resultMeta"></p>
-                        </div>
-                        <a id="downloadBtn" class="px-4 py-2 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition-all text-sm" download>
-                            Download PDF
-                        </a>
-                    </div>
-                </div>
-                <div id="errorArea" class="mt-4 hidden">
-                    <div class="rounded-xl bg-red-500/10 border border-red-500/30 p-4">
-                        <p class="font-bold text-red-400">Error</p>
-                        <p class="text-xs text-slate-400 mt-1" id="errorMsg"></p>
-                    </div>
-                </div>
-
-                <!-- Verification Results Panel -->
-                <div id="verifyPanel" class="mt-4 hidden">
-                    <div class="rounded-xl bg-black/40 border border-border-dark p-4">
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Left: Input -->
+                <div>
+                    <!-- === RELEASE MODE INPUT === -->
+                    <div id="releaseModeInput">
+                        <!-- Mode toggle + Preset selector -->
                         <div class="flex items-center justify-between mb-3">
-                            <p class="font-bold text-sm text-slate-300">
-                                <span class="material-symbols-outlined text-sm align-middle mr-1">verified</span>
-                                Verification
+                            <div class="flex items-center gap-2">
+                                <button onclick="setInputMode('form')" id="modeFormBtn"
+                                    class="px-3 py-1 text-xs font-bold rounded-lg bg-primary text-white">Form</button>
+                                <button onclick="setInputMode('json')" id="modeJsonBtn"
+                                    class="px-3 py-1 text-xs font-bold rounded-lg bg-white/5 text-slate-400 border border-border-dark">JSON</button>
+                            </div>
+                            <select onchange="loadPreset(this.value)"
+                                class="bg-black/40 border border-border-dark rounded-lg px-3 py-1 text-xs text-slate-400">
+                                <option value="default">Preset: Product Release</option>
+                                <option value="security">Security Advisory</option>
+                                <option value="api">API Release</option>
+                                <option value="hotfix">Hotfix</option>
+                            </select>
+                        </div>
+
+                        <!-- Form Mode -->
+                        <div id="formMode"
+                            class="space-y-3 rounded-xl bg-black/40 border border-border-dark p-4 max-h-[420px] overflow-y-auto">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-xs text-slate-500 font-semibold">Product Name <span
+                                            class="text-red-400">*</span></label>
+                                    <input id="fProductName" type="text" value="Acme Platform"
+                                        oninput="syncFormToJson()"
+                                        class="w-full mt-1 bg-black/30 border border-border-dark rounded-lg px-3 py-1.5 text-sm text-slate-300 focus:border-primary focus:ring-1 focus:ring-primary" />
+                                </div>
+                                <div>
+                                    <label class="text-xs text-slate-500 font-semibold">Version <span
+                                            class="text-red-400">*</span></label>
+                                    <input id="fVersion" type="text" value="2.4.0" oninput="syncFormToJson()"
+                                        class="w-full mt-1 bg-black/30 border border-border-dark rounded-lg px-3 py-1.5 text-sm text-slate-300 focus:border-primary focus:ring-1 focus:ring-primary" />
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="text-xs text-slate-500 font-semibold">Release Date</label>
+                                    <input id="fDate" type="date" value="2026-02-16" oninput="syncFormToJson()"
+                                        class="w-full mt-1 bg-black/30 border border-border-dark rounded-lg px-3 py-1.5 text-sm text-slate-300 focus:border-primary focus:ring-1 focus:ring-primary" />
+                                </div>
+                                <div></div>
+                            </div>
+                            <div>
+                                <label class="text-xs text-slate-500 font-semibold">Summary</label>
+                                <textarea id="fSummary" rows="2" oninput="syncFormToJson()"
+                                    class="w-full mt-1 bg-black/30 border border-border-dark rounded-lg px-3 py-1.5 text-sm text-slate-300 focus:border-primary focus:ring-1 focus:ring-primary resize-none">This release introduces real-time collaboration and critical auth fixes.</textarea>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between">
+                                    <label class="text-xs text-slate-500 font-semibold">Features</label>
+                                    <button onclick="addListItem('features')"
+                                        class="text-xs text-primary hover:underline">+ Add</button>
+                                </div>
+                                <div id="featuresList" class="space-y-2 mt-2"></div>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between">
+                                    <label class="text-xs text-slate-500 font-semibold">Bug Fixes</label>
+                                    <button onclick="addListItem('fixes')"
+                                        class="text-xs text-primary hover:underline">+ Add</button>
+                                </div>
+                                <div id="fixesList" class="space-y-2 mt-2"></div>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between">
+                                    <label class="text-xs text-red-400 font-semibold">Breaking Changes</label>
+                                    <button onclick="addListItem('breaking')"
+                                        class="text-xs text-primary hover:underline">+ Add</button>
+                                </div>
+                                <div id="breakingList" class="space-y-2 mt-2"></div>
+                            </div>
+                        </div>
+
+                        <!-- JSON Mode (hidden by default) -->
+                        <textarea id="jsonInput" rows="16" spellcheck="false" style="display:none"
+                            class="w-full rounded-xl bg-black/40 border border-border-dark p-4 font-mono text-xs text-slate-300 focus:border-primary focus:ring-1 focus:ring-primary resize-none"
+                            placeholder='{ "product_name": "...", "version": "...", ... }'></textarea>
+
+                        <div class="flex flex-wrap gap-3 mt-4">
+                            <label class="flex items-center gap-2 text-sm text-slate-400">
+                                <span>Engine:</span>
+                                <select id="engineSelect"
+                                    class="bg-black/40 border border-border-dark rounded-lg px-3 py-1.5 text-sm font-mono text-slate-300">
+                                    <option value="docgen">Foxit Doc Gen API</option>
+                                    <option value="latex">LaTeX (tectonic)</option>
+                                </select>
+                            </label>
+                            <label class="flex items-center gap-2 text-sm text-slate-400">
+                                <span>Watermark:</span>
+                                <select id="watermarkSelect"
+                                    class="bg-black/40 border border-border-dark rounded-lg px-3 py-1.5 text-sm font-mono text-slate-300">
+                                    <option value="INTERNAL">INTERNAL</option>
+                                    <option value="DRAFT">DRAFT</option>
+                                    <option value="CONFIDENTIAL">CONFIDENTIAL</option>
+                                </select>
+                            </label>
+                            <label class="flex items-center gap-2 text-sm text-slate-400">
+                                <input type="checkbox" id="passwordCheck"
+                                    class="rounded border-border-dark bg-black/40 text-primary focus:ring-primary" />
+                                <span>Password-protect</span>
+                            </label>
+                        </div>
+
+                        <button onclick="runGenerate()" id="generateBtn"
+                            class="mt-4 w-full px-6 py-3 bg-primary text-white font-bold rounded-lg glow-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-sm">play_arrow</span>
+                            Generate PDF
+                        </button>
+                    </div><!-- end releaseModeInput -->
+
+                    <!-- === IMAGE MODE INPUT === -->
+                    <div id="imageModeInput" style="display:none">
+                        <div class="rounded-xl bg-black/40 border border-border-dark p-6 text-center">
+                            <span class="material-symbols-outlined text-4xl text-primary mb-3">cloud_upload</span>
+                            <p class="font-bold text-sm mb-2">Upload Images</p>
+                            <p class="text-xs text-slate-500 mb-4">JPG, PNG, or GIF — up to 10MB per file</p>
+                            <input type="file" id="imageFiles" accept="image/*" multiple
+                                class="block w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+                        </div>
+                        <div class="flex flex-wrap gap-3 mt-4">
+                            <label class="flex items-center gap-2 text-sm text-slate-400">
+                                <span>Watermark:</span>
+                                <select id="imgWatermark"
+                                    class="bg-black/40 border border-border-dark rounded-lg px-3 py-1.5 text-sm font-mono text-slate-300">
+                                    <option value="INTERNAL">INTERNAL</option>
+                                    <option value="DRAFT">DRAFT</option>
+                                    <option value="CONFIDENTIAL">CONFIDENTIAL</option>
+                                </select>
+                            </label>
+                        </div>
+                        <button onclick="runImageToPdf()" id="imgGenBtn"
+                            class="mt-4 w-full px-6 py-3 bg-primary text-white font-bold rounded-lg glow-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-sm">image</span>
+                            Convert to PDF
+                        </button>
+                    </div>
+
+                    <!-- === OCR MODE INPUT === -->
+                    <div id="ocrModeInput" style="display:none">
+                        <div class="rounded-xl bg-black/40 border border-border-dark p-6 text-center"
+                            id="ocrUploadArea">
+                            <span class="material-symbols-outlined text-4xl text-primary mb-3">document_scanner</span>
+                            <p class="font-bold text-sm mb-2">Upload Screenshot or Scanned Doc</p>
+                            <p class="text-xs text-slate-500 mb-4">Upload an image of release notes — OCR will extract
+                                text and build a JSON draft</p>
+                            <input type="file" id="ocrFile" accept="image/*,.pdf"
+                                class="block w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+                        </div>
+                        <button onclick="runOcrExtract()" id="ocrExtractBtn"
+                            class="mt-4 w-full px-6 py-3 bg-primary text-white font-bold rounded-lg glow-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-sm">document_scanner</span>
+                            Extract Text (OCR)
+                        </button>
+
+                        <!-- OCR Review Panel (shown after extraction) -->
+                        <div id="ocrReviewPanel" style="display:none" class="mt-4">
+                            <div class="rounded-xl bg-black/40 border border-primary/30 p-4">
+                                <div class="flex items-center justify-between mb-3">
+                                    <p class="font-bold text-sm text-primary">Extracted Draft</p>
+                                    <span class="text-xs px-2 py-0.5 rounded-full" id="ocrConfBadge">—</span>
+                                </div>
+                                <div id="ocrWarnings" class="mb-2"></div>
+                                <textarea id="ocrDraftJson" rows="10" spellcheck="false"
+                                    class="w-full rounded-lg bg-black/30 border border-border-dark p-3 font-mono text-xs text-slate-300 focus:border-primary focus:ring-1 focus:ring-primary resize-none"></textarea>
+                                <button onclick="ocrToPipeline()" id="ocrGenerateBtn"
+                                    class="mt-3 w-full px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-500 transition-all flex items-center justify-center gap-2">
+                                    <span class="material-symbols-outlined text-sm">play_arrow</span>
+                                    Generate PDF from Draft
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="mt-3 text-xs text-slate-600 text-center">
+                        <span class="material-symbols-outlined text-xs align-middle">shield</span>
+                        No data is stored. Files are processed in memory and discarded after output is generated.
+                    </p>
+                </div>
+
+                <!-- Right: Pipeline Steps + Output -->
+                <div>
+                    <h3 class="font-bold text-sm uppercase tracking-widest text-slate-400 mb-3">Pipeline Progress</h3>
+                    <div class="rounded-xl bg-black/40 border border-border-dark p-6 space-y-4" id="pipelinePanel">
+                        <div class="flex items-center gap-4" id="step1">
+                            <div class="size-8 rounded-full border-2 border-border-dark flex items-center justify-center text-xs font-bold text-slate-500 shrink-0"
+                                id="step1icon">1</div>
+                            <div>
+                                <p class="font-semibold text-sm text-slate-400">Validate Input JSON</p>
+                                <p class="text-xs text-slate-600" id="step1detail">Waiting...</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4" id="step2">
+                            <div class="size-8 rounded-full border-2 border-border-dark flex items-center justify-center text-xs font-bold text-slate-500 shrink-0"
+                                id="step2icon">2</div>
+                            <div>
+                                <p class="font-semibold text-sm text-slate-400">Generate PDF <span
+                                        class="text-primary font-normal">(Document Generation API)</span></p>
+                                <p class="text-xs text-slate-600" id="step2detail">Waiting...</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4" id="step3">
+                            <div class="size-8 rounded-full border-2 border-border-dark flex items-center justify-center text-xs font-bold text-slate-500 shrink-0"
+                                id="step3icon">3</div>
+                            <div>
+                                <p class="font-semibold text-sm text-slate-400">Process PDF <span
+                                        class="text-primary font-normal">(PDF Services API)</span></p>
+                                <p class="text-xs text-slate-600" id="step3detail">Watermark → Flatten → Protect</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4" id="step4">
+                            <div class="size-8 rounded-full border-2 border-border-dark flex items-center justify-center text-xs font-bold text-slate-500 shrink-0"
+                                id="step4icon">4</div>
+                            <div>
+                                <p class="font-semibold text-sm text-slate-400">Deliver Output</p>
+                                <p class="text-xs text-slate-600" id="step4detail">Waiting...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Result area -->
+                    <div id="resultArea" class="mt-4 hidden">
+                        <div class="rounded-xl bg-green-500/10 border border-green-500/30 p-4 flex items-center gap-4">
+                            <span class="material-symbols-outlined text-green-400 text-3xl">check_circle</span>
+                            <div class="flex-1">
+                                <p class="font-bold text-green-400" id="resultTitle">PDF Generated!</p>
+                                <p class="text-xs text-slate-400" id="resultMeta"></p>
+                            </div>
+                            <a id="downloadBtn"
+                                class="px-4 py-2 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition-all text-sm"
+                                download>
+                                Download PDF
+                            </a>
+                        </div>
+                    </div>
+                    <div id="errorArea" class="mt-4 hidden">
+                        <div class="rounded-xl bg-red-500/10 border border-red-500/30 p-4">
+                            <p class="font-bold text-red-400">Error</p>
+                            <p class="text-xs text-slate-400 mt-1" id="errorMsg"></p>
+                        </div>
+                    </div>
+
+                    <!-- Verification Results Panel -->
+                    <div id="verifyPanel" class="mt-4 hidden">
+                        <div class="rounded-xl bg-black/40 border border-border-dark p-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <p class="font-bold text-sm text-slate-300">
+                                    <span class="material-symbols-outlined text-sm align-middle mr-1">verified</span>
+                                    Verification
+                                </p>
+                                <span id="verifyBadge"
+                                    class="text-xs px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 font-bold">7/7</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 text-xs" id="verifyChecks">
+                            </div>
+                            <div
+                                class="mt-3 pt-3 border-t border-border-dark grid grid-cols-2 gap-2 text-xs text-slate-500">
+                                <div>Pages: <span id="vPages" class="text-slate-300">—</span></div>
+                                <div>Size: <span id="vSize" class="text-slate-300">—</span></div>
+                                <div class="col-span-2 font-mono text-[10px] truncate">Hash: <span id="vHash"
+                                        class="text-slate-400">—</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step Timings Panel -->
+                    <div id="timingsPanel" class="mt-4 hidden">
+                        <div class="rounded-xl bg-black/40 border border-border-dark p-4">
+                            <p class="font-bold text-sm text-slate-300 mb-3">
+                                <span class="material-symbols-outlined text-sm align-middle mr-1">timer</span>
+                                Step Timings
                             </p>
-                            <span id="verifyBadge" class="text-xs px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 font-bold">7/7</span>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2 text-xs" id="verifyChecks">
-                        </div>
-                        <div class="mt-3 pt-3 border-t border-border-dark grid grid-cols-2 gap-2 text-xs text-slate-500">
-                            <div>Pages: <span id="vPages" class="text-slate-300">—</span></div>
-                            <div>Size: <span id="vSize" class="text-slate-300">—</span></div>
-                            <div class="col-span-2 font-mono text-[10px] truncate">Hash: <span id="vHash" class="text-slate-400">—</span></div>
+                            <div id="timingsList" class="space-y-1 text-xs"></div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Step Timings Panel -->
-                <div id="timingsPanel" class="mt-4 hidden">
-                    <div class="rounded-xl bg-black/40 border border-border-dark p-4">
-                        <p class="font-bold text-sm text-slate-300 mb-3">
-                            <span class="material-symbols-outlined text-sm align-middle mr-1">timer</span>
-                            Step Timings
-                        </p>
-                        <div id="timingsList" class="space-y-1 text-xs"></div>
-                    </div>
-                </div>
-
-                <!-- Before / After -->
-                <div class="mt-4 grid grid-cols-2 gap-4" id="beforeAfter" style="display:none">
-                    <div class="rounded-xl border border-border-dark p-4 text-center">
-                        <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Before (base PDF)</p>
-                        <div class="h-24 bg-white/5 rounded-lg flex items-center justify-center">
-                            <span class="text-slate-600 text-xs">Plain PDF from template</span>
+                    <!-- Before / After -->
+                    <div class="mt-4 grid grid-cols-2 gap-4" id="beforeAfter" style="display:none">
+                        <div class="rounded-xl border border-border-dark p-4 text-center">
+                            <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Before (base PDF)
+                            </p>
+                            <div class="h-24 bg-white/5 rounded-lg flex items-center justify-center">
+                                <span class="text-slate-600 text-xs">Plain PDF from template</span>
+                            </div>
+                            <p class="text-xs text-slate-600 mt-2">No watermark · No security · Editable</p>
                         </div>
-                        <p class="text-xs text-slate-600 mt-2">No watermark · No security · Editable</p>
-                    </div>
-                    <div class="rounded-xl border border-primary/30 p-4 text-center bg-primary/5">
-                        <p class="text-xs font-bold text-primary uppercase tracking-widest mb-2">After (processed PDF)</p>
-                        <div class="h-24 bg-white/5 rounded-lg flex items-center justify-center relative overflow-hidden">
-                            <span class="absolute text-primary/20 text-2xl font-black -rotate-45" id="beforeAfterWM">DRAFT</span>
-                            <span class="text-slate-400 text-xs z-10">Enhanced PDF</span>
+                        <div class="rounded-xl border border-primary/30 p-4 text-center bg-primary/5">
+                            <p class="text-xs font-bold text-primary uppercase tracking-widest mb-2">After (processed
+                                PDF)</p>
+                            <div
+                                class="h-24 bg-white/5 rounded-lg flex items-center justify-center relative overflow-hidden">
+                                <span class="absolute text-primary/20 text-2xl font-black -rotate-45"
+                                    id="beforeAfterWM">DRAFT</span>
+                                <span class="text-slate-400 text-xs z-10">Enhanced PDF</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-2" id="beforeAfterDesc">Watermarked · Flattened · Locked
+                            </p>
                         </div>
-                        <p class="text-xs text-slate-400 mt-2" id="beforeAfterDesc">Watermarked · Flattened · Locked</p>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Where We Use Each Foxit API -->
-<section class="py-20" id="apis">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold mb-3">Where We Use Each Foxit API</h2>
-            <p class="text-slate-400">Both APIs are used meaningfully — not just "hello world" calls.</p>
-        </div>
-        <div class="grid md:grid-cols-2 gap-8">
-            <div class="p-8 rounded-xl bg-card-dark border border-border-dark hover:border-primary/50 transition-all group">
-                <span class="material-symbols-outlined text-4xl text-primary mb-4 group-hover:scale-110 transition-transform">article</span>
-                <h3 class="text-xl font-bold mb-2">Foxit Document Generation API</h3>
-                <p class="text-sm text-primary font-semibold mb-3">What we generate and why</p>
-                <p class="text-slate-400 leading-relaxed mb-4">
-                    We build a Word template programmatically using Foxit's token syntax
-                    (<code class="text-primary">{{ product_name }}</code>, <code class="text-primary">{{TableStart:features}}</code>),
-                    merge it with the release JSON data, and receive a complete PDF with formatted tables for
-                    features, bug fixes, breaking changes, and links.
-                </p>
-                <div class="text-xs font-mono text-slate-500 bg-black/30 rounded-lg p-3">
-                    POST /document-generation/api/GenerateDocumentBase64<br/>
-                    → Input: base64 .docx template + JSON values<br/>
-                    → Output: base64 PDF (synchronous)
+    <!-- Where We Use Each Foxit API -->
+    <section class="py-20" id="apis">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-3">Where We Use Each Foxit API</h2>
+                <p class="text-slate-400">Both APIs are used meaningfully — not just "hello world" calls.</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div
+                    class="p-8 rounded-xl bg-card-dark border border-border-dark hover:border-primary/50 transition-all group">
+                    <span
+                        class="material-symbols-outlined text-4xl text-primary mb-4 group-hover:scale-110 transition-transform">article</span>
+                    <h3 class="text-xl font-bold mb-2">Foxit Document Generation API</h3>
+                    <p class="text-sm text-primary font-semibold mb-3">What we generate and why</p>
+                    <p class="text-slate-400 leading-relaxed mb-4">
+                        We build a Word template programmatically using Foxit's token syntax
+                        (<code class="text-primary">{{ product_name }}</code>, <code
+                            class="text-primary">{{TableStart:features}}</code>),
+                        merge it with the release JSON data, and receive a complete PDF with formatted tables for
+                        features, bug fixes, breaking changes, and links.
+                    </p>
+                    <div class="text-xs font-mono text-slate-500 bg-black/30 rounded-lg p-3">
+                        POST /document-generation/api/GenerateDocumentBase64<br />
+                        → Input: base64 .docx template + JSON values<br />
+                        → Output: base64 PDF (synchronous)
+                    </div>
+                </div>
+                <div
+                    class="p-8 rounded-xl bg-card-dark border border-border-dark hover:border-primary/50 transition-all group">
+                    <span
+                        class="material-symbols-outlined text-4xl text-primary mb-4 group-hover:scale-110 transition-transform">cloud_sync</span>
+                    <h3 class="text-xl font-bold mb-2">Foxit PDF Services API</h3>
+                    <p class="text-sm text-primary font-semibold mb-3">What we do to the PDF and why</p>
+                    <p class="text-slate-400 leading-relaxed mb-4">
+                        We post-process the generated PDF through 3 operations:
+                    </p>
+                    <ul class="space-y-2 text-slate-400 text-sm mb-4">
+                        <li class="flex items-start gap-2"><span class="text-primary font-bold">1.</span>
+                            <strong>Watermark</strong> — stamp "INTERNAL" or "DRAFT" diagonally across every page</li>
+                        <li class="flex items-start gap-2"><span class="text-primary font-bold">2.</span>
+                            <strong>Flatten</strong> — lock annotations and form fields for archival</li>
+                        <li class="flex items-start gap-2"><span class="text-primary font-bold">3.</span>
+                            <strong>Password-protect</strong> — encrypt the PDF so only authorized users can open it
+                        </li>
+                    </ul>
+                    <div class="text-xs font-mono text-slate-500 bg-black/30 rounded-lg p-3">
+                        POST /api/documents/upload<br />
+                        POST /api/documents/enhance/pdf-watermark<br />
+                        POST /api/documents/modify/pdf-flatten<br />
+                        POST /api/documents/security/pdf-protect<br />
+                        GET /api/documents/{id}/download
+                    </div>
                 </div>
             </div>
-            <div class="p-8 rounded-xl bg-card-dark border border-border-dark hover:border-primary/50 transition-all group">
-                <span class="material-symbols-outlined text-4xl text-primary mb-4 group-hover:scale-110 transition-transform">cloud_sync</span>
-                <h3 class="text-xl font-bold mb-2">Foxit PDF Services API</h3>
-                <p class="text-sm text-primary font-semibold mb-3">What we do to the PDF and why</p>
-                <p class="text-slate-400 leading-relaxed mb-4">
-                    We post-process the generated PDF through 3 operations:
-                </p>
-                <ul class="space-y-2 text-slate-400 text-sm mb-4">
-                    <li class="flex items-start gap-2"><span class="text-primary font-bold">1.</span> <strong>Watermark</strong> — stamp "INTERNAL" or "DRAFT" diagonally across every page</li>
-                    <li class="flex items-start gap-2"><span class="text-primary font-bold">2.</span> <strong>Flatten</strong> — lock annotations and form fields for archival</li>
-                    <li class="flex items-start gap-2"><span class="text-primary font-bold">3.</span> <strong>Password-protect</strong> — encrypt the PDF so only authorized users can open it</li>
-                </ul>
-                <div class="text-xs font-mono text-slate-500 bg-black/30 rounded-lg p-3">
-                    POST /api/documents/upload<br/>
-                    POST /api/documents/enhance/pdf-watermark<br/>
-                    POST /api/documents/modify/pdf-flatten<br/>
-                    POST /api/documents/security/pdf-protect<br/>
-                    GET  /api/documents/{id}/download
+        </div>
+    </section>
+
+    <!-- Architecture -->
+    <section class="py-20 bg-card-dark/30 border-y border-border-dark" id="architecture">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <h2 class="text-3xl font-bold mb-4">Architecture Flow</h2>
+            <p class="text-slate-400 mb-12 max-w-xl mx-auto">Complete input → output workflow.</p>
+            <div class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-0">
+                <div class="flex flex-col items-center max-w-[200px]">
+                    <div
+                        class="size-16 rounded-2xl bg-white/5 border border-border-dark flex items-center justify-center mb-4">
+                        <span class="material-symbols-outlined text-2xl text-primary">terminal</span>
+                    </div>
+                    <h3 class="font-bold text-sm mb-1">CLI / Web Input</h3>
+                    <p class="text-xs text-slate-500">Read & validate JSON</p>
+                </div>
+                <div class="hidden md:block w-16 h-px bg-gradient-to-r from-border-dark to-primary"></div>
+                <div class="flex flex-col items-center max-w-[200px]">
+                    <div
+                        class="size-16 rounded-2xl bg-white/5 border border-border-dark flex items-center justify-center mb-4 ring-2 ring-primary ring-offset-2 ring-offset-background-dark">
+                        <span class="material-symbols-outlined text-2xl text-primary">article</span>
+                    </div>
+                    <h3 class="font-bold text-sm mb-1">Doc Gen API</h3>
+                    <p class="text-xs text-slate-500">Template + JSON → PDF</p>
+                    <p class="text-[10px] text-primary mt-1 font-medium">or LaTeX (tectonic)</p>
+                </div>
+                <div class="hidden md:block w-16 h-px bg-gradient-to-r from-primary to-primary"></div>
+                <div class="flex flex-col items-center max-w-[200px]">
+                    <div
+                        class="size-16 rounded-2xl bg-white/5 border border-border-dark flex items-center justify-center mb-4 ring-2 ring-primary ring-offset-2 ring-offset-background-dark">
+                        <span class="material-symbols-outlined text-2xl text-primary">cloud_sync</span>
+                    </div>
+                    <h3 class="font-bold text-sm mb-1">PDF Services API</h3>
+                    <p class="text-xs text-slate-500">Watermark · Flatten · Lock</p>
+                </div>
+                <div class="hidden md:block w-16 h-px bg-gradient-to-r from-primary to-border-dark"></div>
+                <div class="flex flex-col items-center max-w-[200px]">
+                    <div
+                        class="size-16 rounded-2xl bg-white/5 border border-border-dark flex items-center justify-center mb-4">
+                        <span class="material-symbols-outlined text-2xl text-green-400">download</span>
+                    </div>
+                    <h3 class="font-bold text-sm mb-1">Deliver PDF</h3>
+                    <p class="text-xs text-slate-500">Download or save to disk</p>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Architecture -->
-<section class="py-20 bg-card-dark/30 border-y border-border-dark" id="architecture">
-    <div class="max-w-7xl mx-auto px-6 text-center">
-        <h2 class="text-3xl font-bold mb-4">Architecture Flow</h2>
-        <p class="text-slate-400 mb-12 max-w-xl mx-auto">Complete input → output workflow.</p>
-        <div class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-0">
-            <div class="flex flex-col items-center max-w-[200px]">
-                <div class="size-16 rounded-2xl bg-white/5 border border-border-dark flex items-center justify-center mb-4">
-                    <span class="material-symbols-outlined text-2xl text-primary">terminal</span>
+    <!-- Quick Start -->
+    <section class="py-20 bg-primary text-white" id="quickstart">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <h2 class="text-4xl font-black mb-4">Quick Start</h2>
+            <p class="text-white/80 mb-10">Get your first verified PDF in 4 commands.</p>
+            <div class="max-w-2xl mx-auto rounded-xl bg-black/30 p-6 text-left font-mono text-sm">
+                <div><span class="text-white/50">$</span> git clone https://github.com/docforge/docforge-cli && cd
+                    docforge-cli</div>
+                <div class="mt-1"><span class="text-white/50">$</span> make setup <span class="text-white/40"># installs
+                        deps, creates .env</span></div>
+                <div class="mt-1"><span class="text-white/50">$</span> make backend <span class="text-white/40"># start
+                        API server on :8000</span></div>
+                <div class="mt-1"><span class="text-white/50">$</span> docforge generate examples/release.json --engine
+                    latex --verify --open</div>
+                <div class="mt-3 text-white/40 text-xs">
+                    # Or visit http://localhost:8000 for the web demo with all 4 modes:<br />
+                    # JSON → PDF · Image → PDF · Scan → JSON → PDF · LaTeX → PDF
                 </div>
-                <h3 class="font-bold text-sm mb-1">CLI / Web Input</h3>
-                <p class="text-xs text-slate-500">Read & validate JSON</p>
             </div>
-            <div class="hidden md:block w-16 h-px bg-gradient-to-r from-border-dark to-primary"></div>
-            <div class="flex flex-col items-center max-w-[200px]">
-                <div class="size-16 rounded-2xl bg-white/5 border border-border-dark flex items-center justify-center mb-4 ring-2 ring-primary ring-offset-2 ring-offset-background-dark">
-                    <span class="material-symbols-outlined text-2xl text-primary">article</span>
+            <div class="mt-8 flex flex-wrap justify-center gap-4 text-sm">
+                <div class="flex items-center gap-2 bg-white/10 rounded-lg px-4 py-2">
+                    <span class="material-symbols-outlined text-base">description</span>
+                    <span>7 API endpoints</span>
                 </div>
-                <h3 class="font-bold text-sm mb-1">Doc Gen API</h3>
-                <p class="text-xs text-slate-500">Template + JSON → PDF</p>
-                <p class="text-[10px] text-primary mt-1 font-medium">or LaTeX (tectonic)</p>
-            </div>
-            <div class="hidden md:block w-16 h-px bg-gradient-to-r from-primary to-primary"></div>
-            <div class="flex flex-col items-center max-w-[200px]">
-                <div class="size-16 rounded-2xl bg-white/5 border border-border-dark flex items-center justify-center mb-4 ring-2 ring-primary ring-offset-2 ring-offset-background-dark">
-                    <span class="material-symbols-outlined text-2xl text-primary">cloud_sync</span>
+                <div class="flex items-center gap-2 bg-white/10 rounded-lg px-4 py-2">
+                    <span class="material-symbols-outlined text-base">swap_horiz</span>
+                    <span>2 render engines</span>
                 </div>
-                <h3 class="font-bold text-sm mb-1">PDF Services API</h3>
-                <p class="text-xs text-slate-500">Watermark · Flatten · Lock</p>
-            </div>
-            <div class="hidden md:block w-16 h-px bg-gradient-to-r from-primary to-border-dark"></div>
-            <div class="flex flex-col items-center max-w-[200px]">
-                <div class="size-16 rounded-2xl bg-white/5 border border-border-dark flex items-center justify-center mb-4">
-                    <span class="material-symbols-outlined text-2xl text-green-400">download</span>
+                <div class="flex items-center gap-2 bg-white/10 rounded-lg px-4 py-2">
+                    <span class="material-symbols-outlined text-base">verified</span>
+                    <span>7 verification checks</span>
                 </div>
-                <h3 class="font-bold text-sm mb-1">Deliver PDF</h3>
-                <p class="text-xs text-slate-500">Download or save to disk</p>
+                <div class="flex items-center gap-2 bg-white/10 rounded-lg px-4 py-2">
+                    <span class="material-symbols-outlined text-base">document_scanner</span>
+                    <span>OCR ingestion</span>
+                </div>
+                <div class="flex items-center gap-2 bg-white/10 rounded-lg px-4 py-2">
+                    <span class="material-symbols-outlined text-base">deployed_code</span>
+                    <span>3 CI templates</span>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- Quick Start -->
-<section class="py-20 bg-primary text-white" id="quickstart">
-    <div class="max-w-7xl mx-auto px-6 text-center">
-        <h2 class="text-4xl font-black mb-4">Quick Start</h2>
-        <p class="text-white/80 mb-10">Get your first verified PDF in 4 commands.</p>
-        <div class="max-w-2xl mx-auto rounded-xl bg-black/30 p-6 text-left font-mono text-sm">
-            <div><span class="text-white/50">$</span> git clone https://github.com/docforge/docforge-cli && cd docforge-cli</div>
-            <div class="mt-1"><span class="text-white/50">$</span> make setup <span class="text-white/40"># installs deps, creates .env</span></div>
-            <div class="mt-1"><span class="text-white/50">$</span> make backend <span class="text-white/40"># start API server on :8000</span></div>
-            <div class="mt-1"><span class="text-white/50">$</span> docforge generate examples/release.json --engine latex --verify --open</div>
-            <div class="mt-3 text-white/40 text-xs">
-                # Or visit http://localhost:8000 for the web demo with all 4 modes:<br/>
-                # JSON → PDF · Image → PDF · Scan → JSON → PDF · LaTeX → PDF
+    <!-- Footer -->
+    <footer class="py-12 border-t border-border-dark">
+        <div
+            class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-600">
+            <p>&copy; 2026 DocForge CLI. Built for the Foxit Document Automation Hackathon.</p>
+            <div class="flex gap-6">
+                <a class="hover:text-slate-400" href="https://developer-api.foxit.com">Foxit Developer Portal</a>
+                <a class="hover:text-slate-400" href="https://github.com/docforge/docforge-cli">GitHub</a>
             </div>
         </div>
-        <div class="mt-8 flex flex-wrap justify-center gap-4 text-sm">
-            <div class="flex items-center gap-2 bg-white/10 rounded-lg px-4 py-2">
-                <span class="material-symbols-outlined text-base">description</span>
-                <span>7 API endpoints</span>
-            </div>
-            <div class="flex items-center gap-2 bg-white/10 rounded-lg px-4 py-2">
-                <span class="material-symbols-outlined text-base">swap_horiz</span>
-                <span>2 render engines</span>
-            </div>
-            <div class="flex items-center gap-2 bg-white/10 rounded-lg px-4 py-2">
-                <span class="material-symbols-outlined text-base">verified</span>
-                <span>7 verification checks</span>
-            </div>
-            <div class="flex items-center gap-2 bg-white/10 rounded-lg px-4 py-2">
-                <span class="material-symbols-outlined text-base">document_scanner</span>
-                <span>OCR ingestion</span>
-            </div>
-            <div class="flex items-center gap-2 bg-white/10 rounded-lg px-4 py-2">
-                <span class="material-symbols-outlined text-base">deployed_code</span>
-                <span>3 CI templates</span>
-            </div>
-        </div>
-    </div>
-</section>
+    </footer>
 
-<!-- Footer -->
-<footer class="py-12 border-t border-border-dark">
-    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-600">
-        <p>&copy; 2026 DocForge CLI. Built for the Foxit Document Automation Hackathon.</p>
-        <div class="flex gap-6">
-            <a class="hover:text-slate-400" href="https://developer-api.foxit.com">Foxit Developer Portal</a>
-            <a class="hover:text-slate-400" href="https://github.com/docforge/docforge-cli">GitHub</a>
-        </div>
-    </div>
-</footer>
+    <!-- ===== JAVASCRIPT ===== -->
+    <script src="config.js"></script>
+    <script>
+        const API_BASE = window.DOCFORGE_API_URL || window.location.origin;
+        let currentMode = 'form';
 
-<!-- ===== JAVASCRIPT ===== -->
-<script>
-const API_BASE = window.location.origin;
-let currentMode = 'form';
+        // ===== PRESETS =====
+        const PRESETS = {
+            default: {
+                product_name: "Acme Platform", version: "2.4.0", release_date: "2026-02-16",
+                summary: "This release introduces the new real-time collaboration engine, improves dashboard performance by 40%, and resolves several critical authentication bugs.",
+                features: [
+                    { title: "Real-time Collaboration Engine", description: "Multiple users can edit documents simultaneously with live cursor tracking." },
+                    { title: "Dashboard Performance Overhaul", description: "Load times reduced from 3.2s to 0.8s on average." },
+                    { title: "Bulk Export API", description: "New endpoint supports exporting up to 10,000 records in a single request." }
+                ],
+                fixes: [
+                    { id: "BUG-1042", title: "SSO token refresh loop", description: "Fixed infinite redirect when SAML tokens expired." },
+                    { id: "BUG-1058", title: "CSV export encoding", description: "Resolved UTF-8 BOM handling for Excel compatibility." }
+                ],
+                breaking_changes: [
+                    { title: "Removed /v1/users endpoint", description: "Migrate to /v2/users with pagination support.", migration: "Replace /v1/users with /v2/users?fields=id,name&limit=50" },
+                    { title: "Changed auth header format", description: "Bearer tokens must include 'v2:' prefix.", migration: "Update middleware to prepend 'v2:' to tokens." }
+                ],
+                links: [
+                    { label: "Full Changelog", url: "https://github.com/acme/platform/compare/v2.3.0...v2.4.0" },
+                    { label: "Migration Guide", url: "https://docs.acme.io/migrations/2.4.0" }
+                ]
+            },
+            security: {
+                product_name: "Acme Platform", version: "2.3.1-security", release_date: "2026-02-16",
+                summary: "Critical security patch addressing CVE-2026-1234 (authentication bypass) and CVE-2026-1235 (XSS in dashboard). All users should upgrade immediately.",
+                features: [],
+                fixes: [
+                    { id: "CVE-2026-1234", title: "Authentication bypass via crafted JWT", description: "Malformed JWTs could bypass signature verification. Fixed by enforcing strict algorithm allowlist." },
+                    { id: "CVE-2026-1235", title: "Stored XSS in dashboard comments", description: "User-supplied HTML in comments was not sanitized. Fixed with DOMPurify integration." }
+                ],
+                breaking_changes: [
+                    { title: "JWT algorithm restricted to RS256", description: "HS256 and none algorithms are no longer accepted.", migration: "Ensure all token issuers use RS256 signing." }
+                ],
+                links: [
+                    { label: "Security Advisory", url: "https://github.com/acme/platform/security/advisories" }
+                ]
+            },
+            api: {
+                product_name: "Acme API", version: "3.0.0", release_date: "2026-02-16",
+                summary: "Major API version bump with new GraphQL endpoint, rate limiting improvements, and deprecation of REST v1 endpoints.",
+                features: [
+                    { title: "GraphQL API (beta)", description: "New /graphql endpoint supporting queries, mutations, and subscriptions." },
+                    { title: "Adaptive rate limiting", description: "Rate limits now adjust based on account tier and historical usage patterns." },
+                    { title: "Webhook retry with exponential backoff", description: "Failed webhook deliveries are retried up to 5 times with increasing delay." }
+                ],
+                fixes: [
+                    { id: "API-401", title: "Pagination cursor overflow", description: "Cursor values exceeding 2^53 now handled correctly with string-based cursors." }
+                ],
+                breaking_changes: [
+                    { title: "REST v1 endpoints removed", description: "All /v1/* endpoints return 410 Gone.", migration: "Migrate to /v2/* or use the new GraphQL API." },
+                    { title: "Date format changed to ISO 8601", description: "All date fields now return ISO 8601 format instead of Unix timestamps.", migration: "Update date parsing to handle ISO 8601 strings." }
+                ],
+                links: [
+                    { label: "API Reference v3", url: "https://api.acme.io/docs/v3" },
+                    { label: "Migration Guide", url: "https://docs.acme.io/api/v2-to-v3" }
+                ]
+            },
+            hotfix: {
+                product_name: "Acme Platform", version: "2.4.1", release_date: "2026-02-16",
+                summary: "Emergency hotfix for database connection pool exhaustion under high concurrency. No feature changes.",
+                features: [],
+                fixes: [
+                    { id: "HOT-001", title: "Connection pool exhaustion", description: "Database connections were not being returned to pool after timeout. Fixed with proper cleanup in finally blocks." },
+                    { id: "HOT-002", title: "Memory leak in WebSocket handler", description: "Long-lived WebSocket connections accumulated event listeners. Fixed with proper cleanup on disconnect." }
+                ],
+                breaking_changes: [],
+                links: [
+                    { label: "Incident Report", url: "https://status.acme.io/incidents/2026-02-15" }
+                ]
+            }
+        };
 
-// ===== PRESETS =====
-const PRESETS = {
-    default: {
-        product_name: "Acme Platform", version: "2.4.0", release_date: "2026-02-16",
-        summary: "This release introduces the new real-time collaboration engine, improves dashboard performance by 40%, and resolves several critical authentication bugs.",
-        features: [
-            { title: "Real-time Collaboration Engine", description: "Multiple users can edit documents simultaneously with live cursor tracking." },
-            { title: "Dashboard Performance Overhaul", description: "Load times reduced from 3.2s to 0.8s on average." },
-            { title: "Bulk Export API", description: "New endpoint supports exporting up to 10,000 records in a single request." }
-        ],
-        fixes: [
-            { id: "BUG-1042", title: "SSO token refresh loop", description: "Fixed infinite redirect when SAML tokens expired." },
-            { id: "BUG-1058", title: "CSV export encoding", description: "Resolved UTF-8 BOM handling for Excel compatibility." }
-        ],
-        breaking_changes: [
-            { title: "Removed /v1/users endpoint", description: "Migrate to /v2/users with pagination support.", migration: "Replace /v1/users with /v2/users?fields=id,name&limit=50" },
-            { title: "Changed auth header format", description: "Bearer tokens must include 'v2:' prefix.", migration: "Update middleware to prepend 'v2:' to tokens." }
-        ],
-        links: [
-            { label: "Full Changelog", url: "https://github.com/acme/platform/compare/v2.3.0...v2.4.0" },
-            { label: "Migration Guide", url: "https://docs.acme.io/migrations/2.4.0" }
-        ]
-    },
-    security: {
-        product_name: "Acme Platform", version: "2.3.1-security", release_date: "2026-02-16",
-        summary: "Critical security patch addressing CVE-2026-1234 (authentication bypass) and CVE-2026-1235 (XSS in dashboard). All users should upgrade immediately.",
-        features: [],
-        fixes: [
-            { id: "CVE-2026-1234", title: "Authentication bypass via crafted JWT", description: "Malformed JWTs could bypass signature verification. Fixed by enforcing strict algorithm allowlist." },
-            { id: "CVE-2026-1235", title: "Stored XSS in dashboard comments", description: "User-supplied HTML in comments was not sanitized. Fixed with DOMPurify integration." }
-        ],
-        breaking_changes: [
-            { title: "JWT algorithm restricted to RS256", description: "HS256 and none algorithms are no longer accepted.", migration: "Ensure all token issuers use RS256 signing." }
-        ],
-        links: [
-            { label: "Security Advisory", url: "https://github.com/acme/platform/security/advisories" }
-        ]
-    },
-    api: {
-        product_name: "Acme API", version: "3.0.0", release_date: "2026-02-16",
-        summary: "Major API version bump with new GraphQL endpoint, rate limiting improvements, and deprecation of REST v1 endpoints.",
-        features: [
-            { title: "GraphQL API (beta)", description: "New /graphql endpoint supporting queries, mutations, and subscriptions." },
-            { title: "Adaptive rate limiting", description: "Rate limits now adjust based on account tier and historical usage patterns." },
-            { title: "Webhook retry with exponential backoff", description: "Failed webhook deliveries are retried up to 5 times with increasing delay." }
-        ],
-        fixes: [
-            { id: "API-401", title: "Pagination cursor overflow", description: "Cursor values exceeding 2^53 now handled correctly with string-based cursors." }
-        ],
-        breaking_changes: [
-            { title: "REST v1 endpoints removed", description: "All /v1/* endpoints return 410 Gone.", migration: "Migrate to /v2/* or use the new GraphQL API." },
-            { title: "Date format changed to ISO 8601", description: "All date fields now return ISO 8601 format instead of Unix timestamps.", migration: "Update date parsing to handle ISO 8601 strings." }
-        ],
-        links: [
-            { label: "API Reference v3", url: "https://api.acme.io/docs/v3" },
-            { label: "Migration Guide", url: "https://docs.acme.io/api/v2-to-v3" }
-        ]
-    },
-    hotfix: {
-        product_name: "Acme Platform", version: "2.4.1", release_date: "2026-02-16",
-        summary: "Emergency hotfix for database connection pool exhaustion under high concurrency. No feature changes.",
-        features: [],
-        fixes: [
-            { id: "HOT-001", title: "Connection pool exhaustion", description: "Database connections were not being returned to pool after timeout. Fixed with proper cleanup in finally blocks." },
-            { id: "HOT-002", title: "Memory leak in WebSocket handler", description: "Long-lived WebSocket connections accumulated event listeners. Fixed with proper cleanup on disconnect." }
-        ],
-        breaking_changes: [],
-        links: [
-            { label: "Incident Report", url: "https://status.acme.io/incidents/2026-02-15" }
-        ]
-    }
-};
+        const EXAMPLE_JSON = PRESETS.default;
 
-const EXAMPLE_JSON = PRESETS.default;
+        function loadPreset(name) {
+            const data = PRESETS[name] || PRESETS.default;
+            document.getElementById('jsonInput').value = JSON.stringify(data, null, 2);
+            populateForm(data);
+        }
 
-function loadPreset(name) {
-    const data = PRESETS[name] || PRESETS.default;
-    document.getElementById('jsonInput').value = JSON.stringify(data, null, 2);
-    populateForm(data);
-}
+        function loadExample() {
+            loadPreset('default');
+        }
 
-function loadExample() {
-    loadPreset('default');
-}
+        // ===== INPUT MODE TOGGLE =====
+        function setInputMode(mode) {
+            currentMode = mode;
+            const formEl = document.getElementById('formMode');
+            const jsonEl = document.getElementById('jsonInput');
+            const formBtn = document.getElementById('modeFormBtn');
+            const jsonBtn = document.getElementById('modeJsonBtn');
+            if (mode === 'form') {
+                formEl.style.display = '';
+                jsonEl.style.display = 'none';
+                formBtn.className = 'px-3 py-1 text-xs font-bold rounded-lg bg-primary text-white';
+                jsonBtn.className = 'px-3 py-1 text-xs font-bold rounded-lg bg-white/5 text-slate-400 border border-border-dark';
+                try { populateForm(JSON.parse(jsonEl.value)); } catch (e) { }
+            } else {
+                formEl.style.display = 'none';
+                jsonEl.style.display = '';
+                formBtn.className = 'px-3 py-1 text-xs font-bold rounded-lg bg-white/5 text-slate-400 border border-border-dark';
+                jsonBtn.className = 'px-3 py-1 text-xs font-bold rounded-lg bg-primary text-white';
+                syncFormToJson();
+            }
+        }
 
-// ===== INPUT MODE TOGGLE =====
-function setInputMode(mode) {
-    currentMode = mode;
-    const formEl = document.getElementById('formMode');
-    const jsonEl = document.getElementById('jsonInput');
-    const formBtn = document.getElementById('modeFormBtn');
-    const jsonBtn = document.getElementById('modeJsonBtn');
-    if (mode === 'form') {
-        formEl.style.display = '';
-        jsonEl.style.display = 'none';
-        formBtn.className = 'px-3 py-1 text-xs font-bold rounded-lg bg-primary text-white';
-        jsonBtn.className = 'px-3 py-1 text-xs font-bold rounded-lg bg-white/5 text-slate-400 border border-border-dark';
-        try { populateForm(JSON.parse(jsonEl.value)); } catch(e) {}
-    } else {
-        formEl.style.display = 'none';
-        jsonEl.style.display = '';
-        formBtn.className = 'px-3 py-1 text-xs font-bold rounded-lg bg-white/5 text-slate-400 border border-border-dark';
-        jsonBtn.className = 'px-3 py-1 text-xs font-bold rounded-lg bg-primary text-white';
-        syncFormToJson();
-    }
-}
+        // ===== FORM ↔ JSON SYNC =====
+        function populateForm(data) {
+            document.getElementById('fProductName').value = data.product_name || '';
+            document.getElementById('fVersion').value = data.version || '';
+            document.getElementById('fDate').value = data.release_date || '';
+            document.getElementById('fSummary').value = data.summary || '';
 
-// ===== FORM ↔ JSON SYNC =====
-function populateForm(data) {
-    document.getElementById('fProductName').value = data.product_name || '';
-    document.getElementById('fVersion').value = data.version || '';
-    document.getElementById('fDate').value = data.release_date || '';
-    document.getElementById('fSummary').value = data.summary || '';
+            const fl = document.getElementById('featuresList'); fl.innerHTML = '';
+            (data.features || []).forEach(f => addListItem('features', f.title, f.description));
 
-    const fl = document.getElementById('featuresList'); fl.innerHTML = '';
-    (data.features || []).forEach(f => addListItem('features', f.title, f.description));
+            const xl = document.getElementById('fixesList'); xl.innerHTML = '';
+            (data.fixes || []).forEach(f => addListItem('fixes', f.title, f.description, f.id));
 
-    const xl = document.getElementById('fixesList'); xl.innerHTML = '';
-    (data.fixes || []).forEach(f => addListItem('fixes', f.title, f.description, f.id));
+            const bl = document.getElementById('breakingList'); bl.innerHTML = '';
+            (data.breaking_changes || []).forEach(b => addListItem('breaking', b.title, b.description, b.migration));
+        }
 
-    const bl = document.getElementById('breakingList'); bl.innerHTML = '';
-    (data.breaking_changes || []).forEach(b => addListItem('breaking', b.title, b.description, b.migration));
-}
+        function addListItem(type, val1 = '', val2 = '', val3 = '') {
+            const listId = type === 'features' ? 'featuresList' : type === 'fixes' ? 'fixesList' : 'breakingList';
+            const list = document.getElementById(listId);
+            const row = document.createElement('div');
+            row.className = 'flex gap-2 items-start';
 
-function addListItem(type, val1='', val2='', val3='') {
-    const listId = type === 'features' ? 'featuresList' : type === 'fixes' ? 'fixesList' : 'breakingList';
-    const list = document.getElementById(listId);
-    const row = document.createElement('div');
-    row.className = 'flex gap-2 items-start';
-
-    if (type === 'features') {
-        row.innerHTML = `
+            if (type === 'features') {
+                row.innerHTML = `
             <input type="text" placeholder="Feature title" value="${esc(val1)}" oninput="syncFormToJson()"
                 class="flex-1 bg-black/30 border border-border-dark rounded-lg px-2 py-1 text-xs text-slate-300 focus:border-primary focus:ring-1 focus:ring-primary"/>
             <input type="text" placeholder="Description" value="${esc(val2)}" oninput="syncFormToJson()"
                 class="flex-1 bg-black/30 border border-border-dark rounded-lg px-2 py-1 text-xs text-slate-300 focus:border-primary focus:ring-1 focus:ring-primary"/>
             <button onclick="this.parentElement.remove();syncFormToJson()" class="text-red-500 text-xs hover:text-red-400 shrink-0 mt-1">x</button>`;
-    } else if (type === 'fixes') {
-        row.innerHTML = `
+            } else if (type === 'fixes') {
+                row.innerHTML = `
             <input type="text" placeholder="ID" value="${esc(val3)}" oninput="syncFormToJson()" style="width:70px"
                 class="bg-black/30 border border-border-dark rounded-lg px-2 py-1 text-xs text-slate-300 focus:border-primary focus:ring-1 focus:ring-primary"/>
             <input type="text" placeholder="Title" value="${esc(val1)}" oninput="syncFormToJson()"
@@ -870,8 +1007,8 @@ function addListItem(type, val1='', val2='', val3='') {
             <input type="text" placeholder="Description" value="${esc(val2)}" oninput="syncFormToJson()"
                 class="flex-1 bg-black/30 border border-border-dark rounded-lg px-2 py-1 text-xs text-slate-300 focus:border-primary focus:ring-1 focus:ring-primary"/>
             <button onclick="this.parentElement.remove();syncFormToJson()" class="text-red-500 text-xs hover:text-red-400 shrink-0 mt-1">x</button>`;
-    } else {
-        row.innerHTML = `
+            } else {
+                row.innerHTML = `
             <input type="text" placeholder="Change" value="${esc(val1)}" oninput="syncFormToJson()"
                 class="flex-1 bg-black/30 border border-border-dark rounded-lg px-2 py-1 text-xs text-slate-300 focus:border-primary focus:ring-1 focus:ring-primary"/>
             <input type="text" placeholder="Description" value="${esc(val2)}" oninput="syncFormToJson()"
@@ -879,366 +1016,367 @@ function addListItem(type, val1='', val2='', val3='') {
             <input type="text" placeholder="Migration" value="${esc(val3)}" oninput="syncFormToJson()"
                 class="flex-1 bg-black/30 border border-border-dark rounded-lg px-2 py-1 text-xs text-slate-300 focus:border-primary focus:ring-1 focus:ring-primary"/>
             <button onclick="this.parentElement.remove();syncFormToJson()" class="text-red-500 text-xs hover:text-red-400 shrink-0 mt-1">x</button>`;
-    }
-    list.appendChild(row);
-    syncFormToJson();
-}
-
-function esc(s) { return String(s).replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
-
-function getFormRows(listId) {
-    return [...document.getElementById(listId).children].map(row => {
-        const inputs = row.querySelectorAll('input');
-        return [...inputs].map(i => i.value);
-    });
-}
-
-function syncFormToJson() {
-    const data = {
-        product_name: document.getElementById('fProductName').value,
-        version: document.getElementById('fVersion').value,
-        release_date: document.getElementById('fDate').value,
-        summary: document.getElementById('fSummary').value,
-        features: getFormRows('featuresList').map(r => ({ title: r[0], description: r[1] })),
-        fixes: getFormRows('fixesList').map(r => ({ id: r[0], title: r[1], description: r[2] })),
-        breaking_changes: getFormRows('breakingList').map(r => ({ title: r[0], description: r[1], migration: r[2] })),
-        links: []
-    };
-    document.getElementById('jsonInput').value = JSON.stringify(data, null, 2);
-}
-
-function setStep(n, state, detail) {
-    const icon = document.getElementById(`step${n}icon`);
-    const det  = document.getElementById(`step${n}detail`);
-    if (state === 'active') {
-        icon.className = 'size-8 rounded-full border-2 border-primary flex items-center justify-center text-xs font-bold text-primary shrink-0 step-active';
-        det.textContent = detail || 'Processing...';
-        det.className = 'text-xs text-primary';
-    } else if (state === 'done') {
-        icon.className = 'size-8 rounded-full border-2 border-green-500 bg-green-500 flex items-center justify-center text-xs font-bold text-white shrink-0';
-        icon.innerHTML = '<span class="material-symbols-outlined text-sm">check</span>';
-        det.textContent = detail || 'Done';
-        det.className = 'text-xs text-green-400';
-    } else if (state === 'error') {
-        icon.className = 'size-8 rounded-full border-2 border-red-500 flex items-center justify-center text-xs font-bold text-red-500 shrink-0';
-        icon.innerHTML = '<span class="material-symbols-outlined text-sm">close</span>';
-        det.textContent = detail || 'Failed';
-        det.className = 'text-xs text-red-400';
-    } else {
-        icon.className = 'size-8 rounded-full border-2 border-border-dark flex items-center justify-center text-xs font-bold text-slate-500 shrink-0';
-        icon.textContent = n;
-        det.textContent = detail || 'Waiting...';
-        det.className = 'text-xs text-slate-600';
-    }
-}
-
-function resetSteps() {
-    for (let i = 1; i <= 4; i++) setStep(i, 'idle');
-    document.getElementById('step3detail').textContent = 'Watermark → Flatten → Protect';
-    document.getElementById('resultArea').classList.add('hidden');
-    document.getElementById('errorArea').classList.add('hidden');
-    document.getElementById('beforeAfter').style.display = 'none';
-    document.getElementById('verifyPanel').classList.add('hidden');
-    document.getElementById('timingsPanel').classList.add('hidden');
-}
-
-async function runGenerate() {
-    const btn = document.getElementById('generateBtn');
-    if (currentMode === 'form') syncFormToJson();
-    const raw = document.getElementById('jsonInput').value.trim();
-    const watermark = document.getElementById('watermarkSelect').value;
-    const usePassword = document.getElementById('passwordCheck').checked;
-    const engine = document.getElementById('engineSelect').value;
-
-    resetSteps();
-
-    // Step 1: Validate
-    setStep(1, 'active', 'Validating JSON...');
-    let data;
-    try {
-        data = JSON.parse(raw);
-    } catch(e) {
-        setStep(1, 'error', 'Invalid JSON: ' + e.message);
-        return;
-    }
-    if (!data.product_name || !data.version) {
-        setStep(1, 'error', 'Missing required fields: product_name, version');
-        return;
-    }
-    setStep(1, 'done', `${data.product_name} v${data.version} — valid`);
-
-    // Step 2-3: Call backend (one request covers both API calls)
-    const engineLabel = engine === 'latex' ? 'Compiling LaTeX via tectonic...' : 'Calling Foxit Document Generation API...';
-    setStep(2, 'active', engineLabel);
-    btn.disabled = true;
-    btn.innerHTML = '<svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Generating...';
-
-    const start = performance.now();
-    try {
-        const resp = await fetch(`${API_BASE}/v1/generate`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                data: data,
-                watermark: watermark,
-                password: usePassword ? 'docforge2026' : null,
-                engine: engine
-            })
-        });
-
-        if (!resp.ok) {
-            const err = await resp.json().catch(() => ({ detail: resp.statusText }));
-            throw new Error(typeof err.detail === 'string' ? err.detail : JSON.stringify(err.detail));
+            }
+            list.appendChild(row);
+            syncFormToJson();
         }
 
-        const elapsed = Math.round(performance.now() - start);
-        const engName = engine === 'latex' ? 'LaTeX' : 'Doc Gen API';
-        setStep(2, 'done', `Base PDF via ${engName} in ~${Math.round(elapsed * 0.3)}ms`);
-        setStep(3, 'done', `Watermark "${watermark}" + Flatten + ${usePassword ? 'Password' : 'No lock'} — ${Math.round(elapsed * 0.7)}ms`);
+        function esc(s) { return String(s).replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
 
-        // Parse job metadata from header
-        const jobHeader = resp.headers.get('X-DocForge-Job');
-
-        const blob = await resp.blob();
-        const url = URL.createObjectURL(blob);
-        const sizeKB = (blob.size / 1024).toFixed(1);
-        const filename = `${data.product_name.toLowerCase().replace(/\s+/g,'-')}-v${data.version}-release-notes.pdf`;
-
-        setStep(4, 'done', `${sizeKB} KB — ready to download`);
-
-        // Show result
-        document.getElementById('resultArea').classList.remove('hidden');
-        document.getElementById('resultTitle').textContent = `${data.product_name} v${data.version} — PDF Generated!`;
-        document.getElementById('resultMeta').textContent = `${sizeKB} KB · ${elapsed}ms pipeline · watermark: ${watermark}${usePassword ? ' · password-protected' : ''}`;
-        const dlBtn = document.getElementById('downloadBtn');
-        dlBtn.href = url;
-        dlBtn.download = filename;
-
-        // Show before/after
-        document.getElementById('beforeAfterWM').textContent = watermark;
-        document.getElementById('beforeAfterDesc').textContent = `Watermarked "${watermark}" · Flattened${usePassword ? ' · Password-protected' : ''}`;
-        document.getElementById('beforeAfter').style.display = 'grid';
-
-        // Show verification and timings from job metadata
-        if (jobHeader) showJobMetadata(jobHeader);
-
-    } catch(e) {
-        setStep(2, 'error', e.message);
-        document.getElementById('errorArea').classList.remove('hidden');
-        document.getElementById('errorMsg').textContent = e.message;
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<span class="material-symbols-outlined text-sm">play_arrow</span> Generate PDF';
-    }
-}
-
-// ===== DEMO MODE SWITCHING =====
-let currentDemoMode = 'release';
-
-function setDemoMode(mode) {
-    currentDemoMode = mode;
-    document.querySelectorAll('.demo-tab').forEach(btn => {
-        if (btn.dataset.mode === mode) {
-            btn.className = 'demo-tab px-4 py-2 text-xs font-bold rounded-lg bg-primary text-white';
-        } else {
-            btn.className = 'demo-tab px-4 py-2 text-xs font-bold rounded-lg bg-white/5 text-slate-400 border border-border-dark';
-        }
-    });
-    document.getElementById('releaseModeInput').style.display = mode === 'release' ? '' : 'none';
-    document.getElementById('imageModeInput').style.display = mode === 'image' ? '' : 'none';
-    document.getElementById('ocrModeInput').style.display = mode === 'ocr' ? '' : 'none';
-    resetSteps();
-    document.getElementById('verifyPanel').classList.add('hidden');
-    document.getElementById('timingsPanel').classList.add('hidden');
-}
-
-// ===== IMAGE → PDF =====
-async function runImageToPdf() {
-    const btn = document.getElementById('imgGenBtn');
-    const files = document.getElementById('imageFiles').files;
-    if (!files.length) { alert('Please select at least one image.'); return; }
-
-    resetSteps();
-    setStep(1, 'done', `${files.length} image(s) selected`);
-    setStep(2, 'active', 'Converting images to PDF...');
-    btn.disabled = true;
-
-    const formData = new FormData();
-    for (const f of files) formData.append('files', f);
-    formData.append('watermark', document.getElementById('imgWatermark').value);
-
-    const start = performance.now();
-    try {
-        const resp = await fetch(`${API_BASE}/v1/image-to-pdf`, { method: 'POST', body: formData });
-        if (!resp.ok) throw new Error(await resp.text());
-        const elapsed = Math.round(performance.now() - start);
-
-        setStep(2, 'done', `Images merged into PDF — ${elapsed}ms`);
-        setStep(3, 'done', `Watermarked + Flattened via Foxit PDF Services`);
-
-        const blob = await resp.blob();
-        const url = URL.createObjectURL(blob);
-        setStep(4, 'done', `${(blob.size / 1024).toFixed(1)} KB — ready`);
-
-        document.getElementById('resultArea').classList.remove('hidden');
-        document.getElementById('resultTitle').textContent = 'Image → PDF Complete!';
-        document.getElementById('resultMeta').textContent = `${(blob.size / 1024).toFixed(1)} KB · ${elapsed}ms · ${files.length} pages`;
-        const dlBtn = document.getElementById('downloadBtn');
-        dlBtn.href = url;
-        dlBtn.download = 'images-converted.pdf';
-    } catch(e) {
-        setStep(2, 'error', e.message);
-        document.getElementById('errorArea').classList.remove('hidden');
-        document.getElementById('errorMsg').textContent = e.message;
-    } finally {
-        btn.disabled = false;
-    }
-}
-
-// ===== OCR: EXTRACT =====
-async function runOcrExtract() {
-    const btn = document.getElementById('ocrExtractBtn');
-    const file = document.getElementById('ocrFile').files[0];
-    if (!file) { alert('Please select an image or PDF.'); return; }
-
-    resetSteps();
-    setStep(1, 'active', 'Uploading for OCR extraction...');
-    btn.disabled = true;
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-        const resp = await fetch(`${API_BASE}/v1/ocr/extract`, { method: 'POST', body: formData });
-        if (!resp.ok) throw new Error(await resp.text());
-        const ocrResult = await resp.json();
-
-        setStep(1, 'done', `Extracted ${ocrResult.blocks.length} lines (${(ocrResult.overall_confidence * 100).toFixed(0)}% confidence)`);
-        setStep(2, 'active', 'Structurizing into release JSON...');
-
-        // Step 2: Structurize
-        const structResp = await fetch(`${API_BASE}/v1/ocr/structurize`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: ocrResult.raw_text })
-        });
-        if (!structResp.ok) throw new Error(await structResp.text());
-        const structResult = await structResp.json();
-
-        setStep(2, 'done', `Draft JSON ready (${(structResult.confidence * 100).toFixed(0)}% confidence)`);
-
-        // Show review panel
-        document.getElementById('ocrReviewPanel').style.display = '';
-        document.getElementById('ocrDraftJson').value = JSON.stringify(structResult.draft_json, null, 2);
-
-        const confPct = (structResult.confidence * 100).toFixed(0);
-        const badge = document.getElementById('ocrConfBadge');
-        if (structResult.confidence >= 0.85) {
-            badge.className = 'text-xs px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 font-bold';
-            badge.textContent = `${confPct}% confidence`;
-        } else if (structResult.confidence >= 0.70) {
-            badge.className = 'text-xs px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-400 font-bold';
-            badge.textContent = `${confPct}% — review needed`;
-        } else {
-            badge.className = 'text-xs px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 font-bold';
-            badge.textContent = `${confPct}% — manual review required`;
+        function getFormRows(listId) {
+            return [...document.getElementById(listId).children].map(row => {
+                const inputs = row.querySelectorAll('input');
+                return [...inputs].map(i => i.value);
+            });
         }
 
-        const warnDiv = document.getElementById('ocrWarnings');
-        warnDiv.innerHTML = structResult.warnings.map(w =>
-            `<p class="text-xs text-yellow-400 mb-1">⚠ ${w}</p>`
-        ).join('');
+        function syncFormToJson() {
+            const data = {
+                product_name: document.getElementById('fProductName').value,
+                version: document.getElementById('fVersion').value,
+                release_date: document.getElementById('fDate').value,
+                summary: document.getElementById('fSummary').value,
+                features: getFormRows('featuresList').map(r => ({ title: r[0], description: r[1] })),
+                fixes: getFormRows('fixesList').map(r => ({ id: r[0], title: r[1], description: r[2] })),
+                breaking_changes: getFormRows('breakingList').map(r => ({ title: r[0], description: r[1], migration: r[2] })),
+                links: []
+            };
+            document.getElementById('jsonInput').value = JSON.stringify(data, null, 2);
+        }
 
-    } catch(e) {
-        setStep(1, 'error', e.message);
-    } finally {
-        btn.disabled = false;
-    }
-}
+        function setStep(n, state, detail) {
+            const icon = document.getElementById(`step${n}icon`);
+            const det = document.getElementById(`step${n}detail`);
+            if (state === 'active') {
+                icon.className = 'size-8 rounded-full border-2 border-primary flex items-center justify-center text-xs font-bold text-primary shrink-0 step-active';
+                det.textContent = detail || 'Processing...';
+                det.className = 'text-xs text-primary';
+            } else if (state === 'done') {
+                icon.className = 'size-8 rounded-full border-2 border-green-500 bg-green-500 flex items-center justify-center text-xs font-bold text-white shrink-0';
+                icon.innerHTML = '<span class="material-symbols-outlined text-sm">check</span>';
+                det.textContent = detail || 'Done';
+                det.className = 'text-xs text-green-400';
+            } else if (state === 'error') {
+                icon.className = 'size-8 rounded-full border-2 border-red-500 flex items-center justify-center text-xs font-bold text-red-500 shrink-0';
+                icon.innerHTML = '<span class="material-symbols-outlined text-sm">close</span>';
+                det.textContent = detail || 'Failed';
+                det.className = 'text-xs text-red-400';
+            } else {
+                icon.className = 'size-8 rounded-full border-2 border-border-dark flex items-center justify-center text-xs font-bold text-slate-500 shrink-0';
+                icon.textContent = n;
+                det.textContent = detail || 'Waiting...';
+                det.className = 'text-xs text-slate-600';
+            }
+        }
 
-// ===== OCR → PIPELINE =====
-async function ocrToPipeline() {
-    const raw = document.getElementById('ocrDraftJson').value;
-    let data;
-    try { data = JSON.parse(raw); } catch(e) { alert('Invalid JSON in draft. Please fix.'); return; }
-    if (!data.product_name || !data.version) { alert('product_name and version are required.'); return; }
+        function resetSteps() {
+            for (let i = 1; i <= 4; i++) setStep(i, 'idle');
+            document.getElementById('step3detail').textContent = 'Watermark → Flatten → Protect';
+            document.getElementById('resultArea').classList.add('hidden');
+            document.getElementById('errorArea').classList.add('hidden');
+            document.getElementById('beforeAfter').style.display = 'none';
+            document.getElementById('verifyPanel').classList.add('hidden');
+            document.getElementById('timingsPanel').classList.add('hidden');
+        }
 
-    // Switch to release mode with this data
-    document.getElementById('jsonInput').value = JSON.stringify(data, null, 2);
-    populateForm(data);
-    setDemoMode('release');
-    setInputMode('form');
-    runGenerate();
-}
+        async function runGenerate() {
+            const btn = document.getElementById('generateBtn');
+            if (currentMode === 'form') syncFormToJson();
+            const raw = document.getElementById('jsonInput').value.trim();
+            const watermark = document.getElementById('watermarkSelect').value;
+            const usePassword = document.getElementById('passwordCheck').checked;
+            const engine = document.getElementById('engineSelect').value;
 
-// ===== SHOW VERIFICATION & TIMINGS =====
-function showJobMetadata(headerValue) {
-    try {
-        const jobJson = atob(headerValue);
-        const job = JSON.parse(jobJson);
+            resetSteps();
 
-        // Verification panel
-        if (job.verification) {
-            const v = job.verification;
-            const panel = document.getElementById('verifyPanel');
-            panel.classList.remove('hidden');
+            // Step 1: Validate
+            setStep(1, 'active', 'Validating JSON...');
+            let data;
+            try {
+                data = JSON.parse(raw);
+            } catch (e) {
+                setStep(1, 'error', 'Invalid JSON: ' + e.message);
+                return;
+            }
+            if (!data.product_name || !data.version) {
+                setStep(1, 'error', 'Missing required fields: product_name, version');
+                return;
+            }
+            setStep(1, 'done', `${data.product_name} v${data.version} — valid`);
 
-            document.getElementById('verifyBadge').textContent = `${v.checks_passed}/${v.checks_total}`;
-            document.getElementById('verifyBadge').className = v.passed
-                ? 'text-xs px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 font-bold'
-                : 'text-xs px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 font-bold';
+            // Step 2-3: Call backend (one request covers both API calls)
+            const engineLabel = engine === 'latex' ? 'Compiling LaTeX via tectonic...' : 'Calling Foxit Document Generation API...';
+            setStep(2, 'active', engineLabel);
+            btn.disabled = true;
+            btn.innerHTML = '<svg class="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Generating...';
 
-            const checks = [
-                ['Has text', v.has_text],
-                ['Watermark', v.watermark_detected],
-                ['All pages', v.watermark_on_all_pages],
-                ['Encrypted', v.is_encrypted],
-                ['Flattened', v.flattening_signals],
-                [`Pages: ${v.page_count}`, true],
-            ];
-            document.getElementById('verifyChecks').innerHTML = checks.map(([label, ok]) =>
-                `<div class="flex items-center gap-1.5">
+            const start = performance.now();
+            try {
+                const resp = await fetch(`${API_BASE}/v1/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        data: data,
+                        watermark: watermark,
+                        password: usePassword ? 'docforge2026' : null,
+                        engine: engine
+                    })
+                });
+
+                if (!resp.ok) {
+                    const err = await resp.json().catch(() => ({ detail: resp.statusText }));
+                    throw new Error(typeof err.detail === 'string' ? err.detail : JSON.stringify(err.detail));
+                }
+
+                const elapsed = Math.round(performance.now() - start);
+                const engName = engine === 'latex' ? 'LaTeX' : 'Doc Gen API';
+                setStep(2, 'done', `Base PDF via ${engName} in ~${Math.round(elapsed * 0.3)}ms`);
+                setStep(3, 'done', `Watermark "${watermark}" + Flatten + ${usePassword ? 'Password' : 'No lock'} — ${Math.round(elapsed * 0.7)}ms`);
+
+                // Parse job metadata from header
+                const jobHeader = resp.headers.get('X-DocForge-Job');
+
+                const blob = await resp.blob();
+                const url = URL.createObjectURL(blob);
+                const sizeKB = (blob.size / 1024).toFixed(1);
+                const filename = `${data.product_name.toLowerCase().replace(/\s+/g, '-')}-v${data.version}-release-notes.pdf`;
+
+                setStep(4, 'done', `${sizeKB} KB — ready to download`);
+
+                // Show result
+                document.getElementById('resultArea').classList.remove('hidden');
+                document.getElementById('resultTitle').textContent = `${data.product_name} v${data.version} — PDF Generated!`;
+                document.getElementById('resultMeta').textContent = `${sizeKB} KB · ${elapsed}ms pipeline · watermark: ${watermark}${usePassword ? ' · password-protected' : ''}`;
+                const dlBtn = document.getElementById('downloadBtn');
+                dlBtn.href = url;
+                dlBtn.download = filename;
+
+                // Show before/after
+                document.getElementById('beforeAfterWM').textContent = watermark;
+                document.getElementById('beforeAfterDesc').textContent = `Watermarked "${watermark}" · Flattened${usePassword ? ' · Password-protected' : ''}`;
+                document.getElementById('beforeAfter').style.display = 'grid';
+
+                // Show verification and timings from job metadata
+                if (jobHeader) showJobMetadata(jobHeader);
+
+            } catch (e) {
+                setStep(2, 'error', e.message);
+                document.getElementById('errorArea').classList.remove('hidden');
+                document.getElementById('errorMsg').textContent = e.message;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span class="material-symbols-outlined text-sm">play_arrow</span> Generate PDF';
+            }
+        }
+
+        // ===== DEMO MODE SWITCHING =====
+        let currentDemoMode = 'release';
+
+        function setDemoMode(mode) {
+            currentDemoMode = mode;
+            document.querySelectorAll('.demo-tab').forEach(btn => {
+                if (btn.dataset.mode === mode) {
+                    btn.className = 'demo-tab px-4 py-2 text-xs font-bold rounded-lg bg-primary text-white';
+                } else {
+                    btn.className = 'demo-tab px-4 py-2 text-xs font-bold rounded-lg bg-white/5 text-slate-400 border border-border-dark';
+                }
+            });
+            document.getElementById('releaseModeInput').style.display = mode === 'release' ? '' : 'none';
+            document.getElementById('imageModeInput').style.display = mode === 'image' ? '' : 'none';
+            document.getElementById('ocrModeInput').style.display = mode === 'ocr' ? '' : 'none';
+            resetSteps();
+            document.getElementById('verifyPanel').classList.add('hidden');
+            document.getElementById('timingsPanel').classList.add('hidden');
+        }
+
+        // ===== IMAGE → PDF =====
+        async function runImageToPdf() {
+            const btn = document.getElementById('imgGenBtn');
+            const files = document.getElementById('imageFiles').files;
+            if (!files.length) { alert('Please select at least one image.'); return; }
+
+            resetSteps();
+            setStep(1, 'done', `${files.length} image(s) selected`);
+            setStep(2, 'active', 'Converting images to PDF...');
+            btn.disabled = true;
+
+            const formData = new FormData();
+            for (const f of files) formData.append('files', f);
+            formData.append('watermark', document.getElementById('imgWatermark').value);
+
+            const start = performance.now();
+            try {
+                const resp = await fetch(`${API_BASE}/v1/image-to-pdf`, { method: 'POST', body: formData });
+                if (!resp.ok) throw new Error(await resp.text());
+                const elapsed = Math.round(performance.now() - start);
+
+                setStep(2, 'done', `Images merged into PDF — ${elapsed}ms`);
+                setStep(3, 'done', `Watermarked + Flattened via Foxit PDF Services`);
+
+                const blob = await resp.blob();
+                const url = URL.createObjectURL(blob);
+                setStep(4, 'done', `${(blob.size / 1024).toFixed(1)} KB — ready`);
+
+                document.getElementById('resultArea').classList.remove('hidden');
+                document.getElementById('resultTitle').textContent = 'Image → PDF Complete!';
+                document.getElementById('resultMeta').textContent = `${(blob.size / 1024).toFixed(1)} KB · ${elapsed}ms · ${files.length} pages`;
+                const dlBtn = document.getElementById('downloadBtn');
+                dlBtn.href = url;
+                dlBtn.download = 'images-converted.pdf';
+            } catch (e) {
+                setStep(2, 'error', e.message);
+                document.getElementById('errorArea').classList.remove('hidden');
+                document.getElementById('errorMsg').textContent = e.message;
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // ===== OCR: EXTRACT =====
+        async function runOcrExtract() {
+            const btn = document.getElementById('ocrExtractBtn');
+            const file = document.getElementById('ocrFile').files[0];
+            if (!file) { alert('Please select an image or PDF.'); return; }
+
+            resetSteps();
+            setStep(1, 'active', 'Uploading for OCR extraction...');
+            btn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const resp = await fetch(`${API_BASE}/v1/ocr/extract`, { method: 'POST', body: formData });
+                if (!resp.ok) throw new Error(await resp.text());
+                const ocrResult = await resp.json();
+
+                setStep(1, 'done', `Extracted ${ocrResult.blocks.length} lines (${(ocrResult.overall_confidence * 100).toFixed(0)}% confidence)`);
+                setStep(2, 'active', 'Structurizing into release JSON...');
+
+                // Step 2: Structurize
+                const structResp = await fetch(`${API_BASE}/v1/ocr/structurize`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text: ocrResult.raw_text })
+                });
+                if (!structResp.ok) throw new Error(await structResp.text());
+                const structResult = await structResp.json();
+
+                setStep(2, 'done', `Draft JSON ready (${(structResult.confidence * 100).toFixed(0)}% confidence)`);
+
+                // Show review panel
+                document.getElementById('ocrReviewPanel').style.display = '';
+                document.getElementById('ocrDraftJson').value = JSON.stringify(structResult.draft_json, null, 2);
+
+                const confPct = (structResult.confidence * 100).toFixed(0);
+                const badge = document.getElementById('ocrConfBadge');
+                if (structResult.confidence >= 0.85) {
+                    badge.className = 'text-xs px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 font-bold';
+                    badge.textContent = `${confPct}% confidence`;
+                } else if (structResult.confidence >= 0.70) {
+                    badge.className = 'text-xs px-2 py-0.5 rounded-full bg-yellow-500/20 text-yellow-400 font-bold';
+                    badge.textContent = `${confPct}% — review needed`;
+                } else {
+                    badge.className = 'text-xs px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 font-bold';
+                    badge.textContent = `${confPct}% — manual review required`;
+                }
+
+                const warnDiv = document.getElementById('ocrWarnings');
+                warnDiv.innerHTML = structResult.warnings.map(w =>
+                    `<p class="text-xs text-yellow-400 mb-1">⚠ ${w}</p>`
+                ).join('');
+
+            } catch (e) {
+                setStep(1, 'error', e.message);
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // ===== OCR → PIPELINE =====
+        async function ocrToPipeline() {
+            const raw = document.getElementById('ocrDraftJson').value;
+            let data;
+            try { data = JSON.parse(raw); } catch (e) { alert('Invalid JSON in draft. Please fix.'); return; }
+            if (!data.product_name || !data.version) { alert('product_name and version are required.'); return; }
+
+            // Switch to release mode with this data
+            document.getElementById('jsonInput').value = JSON.stringify(data, null, 2);
+            populateForm(data);
+            setDemoMode('release');
+            setInputMode('form');
+            runGenerate();
+        }
+
+        // ===== SHOW VERIFICATION & TIMINGS =====
+        function showJobMetadata(headerValue) {
+            try {
+                const jobJson = atob(headerValue);
+                const job = JSON.parse(jobJson);
+
+                // Verification panel
+                if (job.verification) {
+                    const v = job.verification;
+                    const panel = document.getElementById('verifyPanel');
+                    panel.classList.remove('hidden');
+
+                    document.getElementById('verifyBadge').textContent = `${v.checks_passed}/${v.checks_total}`;
+                    document.getElementById('verifyBadge').className = v.passed
+                        ? 'text-xs px-2 py-0.5 rounded-full bg-green-500/20 text-green-400 font-bold'
+                        : 'text-xs px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 font-bold';
+
+                    const checks = [
+                        ['Has text', v.has_text],
+                        ['Watermark', v.watermark_detected],
+                        ['All pages', v.watermark_on_all_pages],
+                        ['Encrypted', v.is_encrypted],
+                        ['Flattened', v.flattening_signals],
+                        [`Pages: ${v.page_count}`, true],
+                    ];
+                    document.getElementById('verifyChecks').innerHTML = checks.map(([label, ok]) =>
+                        `<div class="flex items-center gap-1.5">
                     <span class="material-symbols-outlined text-xs ${ok ? 'text-green-400' : 'text-red-400'}">${ok ? 'check_circle' : 'cancel'}</span>
                     <span class="${ok ? 'text-slate-300' : 'text-red-400'}">${label}</span>
                 </div>`
-            ).join('');
+                    ).join('');
 
-            document.getElementById('vPages').textContent = v.page_count;
-            document.getElementById('vSize').textContent = (v.file_size / 1024).toFixed(1) + ' KB';
-            document.getElementById('vHash').textContent = v.content_hash.slice(0, 16) + '...';
-        }
+                    document.getElementById('vPages').textContent = v.page_count;
+                    document.getElementById('vSize').textContent = (v.file_size / 1024).toFixed(1) + ' KB';
+                    document.getElementById('vHash').textContent = v.content_hash.slice(0, 16) + '...';
+                }
 
-        // Timings panel
-        if (job.timings && job.timings.length) {
-            const tPanel = document.getElementById('timingsPanel');
-            tPanel.classList.remove('hidden');
-            const total = job.timings.reduce((s, t) => s + t.duration_ms, 0);
+                // Timings panel
+                if (job.timings && job.timings.length) {
+                    const tPanel = document.getElementById('timingsPanel');
+                    tPanel.classList.remove('hidden');
+                    const total = job.timings.reduce((s, t) => s + t.duration_ms, 0);
 
-            document.getElementById('timingsList').innerHTML = job.timings.map(t => {
-                const pct = total > 0 ? (t.duration_ms / total * 100) : 0;
-                const color = t.status === 'ok' ? 'bg-green-500' : t.status === 'skipped' ? 'bg-slate-600' : 'bg-red-500';
-                return `<div class="flex items-center gap-2">
+                    document.getElementById('timingsList').innerHTML = job.timings.map(t => {
+                        const pct = total > 0 ? (t.duration_ms / total * 100) : 0;
+                        const color = t.status === 'ok' ? 'bg-green-500' : t.status === 'skipped' ? 'bg-slate-600' : 'bg-red-500';
+                        return `<div class="flex items-center gap-2">
                     <span class="w-24 text-slate-400 truncate">${t.step}</span>
                     <div class="flex-1 h-2 bg-white/5 rounded-full overflow-hidden">
                         <div class="${color} h-full rounded-full" style="width:${Math.max(pct, 2)}%"></div>
                     </div>
                     <span class="w-16 text-right text-slate-500">${t.duration_ms}ms</span>
                 </div>`;
-            }).join('') + `<div class="flex items-center gap-2 pt-1 border-t border-border-dark mt-1">
+                    }).join('') + `<div class="flex items-center gap-2 pt-1 border-t border-border-dark mt-1">
                 <span class="w-24 font-bold text-slate-300">Total</span>
                 <div class="flex-1"></div>
                 <span class="w-16 text-right font-bold text-primary">${total}ms</span>
             </div>`;
+                }
+            } catch (e) {
+                console.warn('Could not parse job metadata:', e);
+            }
         }
-    } catch(e) {
-        console.warn('Could not parse job metadata:', e);
-    }
-}
 
-// Initialize on page load
-loadExample();
-populateForm(EXAMPLE_JSON);
-</script>
+        // Initialize on page load
+        loadExample();
+        populateForm(EXAMPLE_JSON);
+    </script>
 
 </body>
+
 </html>
