@@ -226,6 +226,7 @@ docforge generate release.json \
 ```
 
 Output:
+
 ```
   ✓ PDF generated for Acme Platform v2.4.0
 
@@ -249,35 +250,79 @@ Output:
 
 ## Architecture
 
-```
-┌──────────────────┐                             ┌──────────────────────────────────────────────┐
-│  CLI (Node.js)   │   POST /v1/generate         │              Backend (FastAPI v2)             │
-│  Web UI (4 modes)│──────────────────────────────│                                              │
-│  GitHub Actions  │   { engine, data, verify }   │  1. Validate (Pydantic + JSON Schema)        │
-│                  │                              │  2. Resolve Assets (path security, SHA-256)   │
-│                  │◀─────────────────────────────│  3. Generate:                                │
-│  PDF + JobResult │   application/pdf            │     ├─ docgen → Foxit Doc Gen API            │
-│                  │   X-DocForge-Job (base64)    │     └─ latex  → tectonic (sandboxed)         │
-└──────────────────┘                              │  4. Foxit PDF Services API:                  │
-                                                  │     ├─ Upload → Watermark → Flatten          │
-┌──────────────────┐   POST /v1/image-to-pdf      │     └─ Protect (optional)                    │
-│  Image Upload    │──────────────────────────────│  5. Verify (7 checks, SHA-256, diff)         │
-└──────────────────┘                              │  6. Deliver (PDF + metadata)                 │
-                                                  │                                              │
-┌──────────────────┐   POST /v1/ocr/extract       │  OCR Pipeline:                               │
-│  Scan Upload     │──────────────────────────────│     Tesseract → structurize → draft JSON     │
-│                  │   POST /v1/ocr/structurize   │     → user review → generate                 │
-└──────────────────┘                              └──────────────────────────────────────────────┘
+### Overall System Architecture
+
+```mermaid
+graph TD
+  subgraph Clients
+    CLI[CLI (Node.js)]
+    Web[Web UI]
+    CI[GitHub Actions]
+  end
+
+  subgraph Backend [Backend API (FastAPI)]
+    Validate[Validate]
+    Assets[Resolve Assets]
+    Gen[Generate PDF]
+    Post[Post-Process]
+    Verify[Verify]
+  end
+
+  subgraph External [External Services]
+    FoxitDoc[Foxit Doc Gen API]
+    FoxitPDF[Foxit PDF Services API]
+    Tectonic[Tectonic (LaTeX)]
+  end
+
+  CLI -->|POST /v1/generate| Backend
+  Web -->|POST /v1/generate| Backend
+  CI -->|POST /v1/generate| Backend
+
+  Backend --> Validate
+  Validate --> Assets
+  Assets --> Gen
+  Gen -->|Draft| FoxitDoc
+  Gen -->|Typeset| Tectonic
+  Gen --> Post
+  Post -->|Watermark/Protect| FoxitPDF
+  Post --> Verify
 ```
 
-### Job Orchestrator (State Machine)
+### Frontend Architecture (CLI)
+
+```mermaid
+graph LR
+  User[User] -->|docforge generate| CLI_Main[index.js]
+  CLI_Main --> Cmd_Gen[commands/generate.js]
+  CLI_Main --> Cmd_Ver[commands/verify.js]
+  CLI_Main --> Cmd_OCR[commands/ocr.js]
+
+  Cmd_Gen -->|Read Config| Config[lib/config.js]
+  Cmd_Gen -->|POST /v1/generate| API[Backend API]
+  
+  Cmd_Ver -->|Verify Local PDF| LocalVerify[Verification Module]
+  Cmd_OCR -->|POST /v1/ocr| API
+```
+
+### Backend Architecture (Job Orchestrator)
 
 The pipeline runs as a state machine with per-step timing and structured logging:
 
-```
-RECEIVED → VALIDATED → ASSET_RESOLVED → BASE_PDF_GENERATED → POST_PROCESSED → VERIFIED → DELIVERED
-                                                                                    ↓
-                                                                                  FAILED
+```mermaid
+stateDiagram-v2
+  [*] --> RECEIVED
+  RECEIVED --> VALIDATED: Schema / Pydantic Check
+  VALIDATED --> ASSET_RESOLVED: Images / Attachments Check
+  ASSET_RESOLVED --> BASE_PDF_GENERATED: Engine (DocGen / LaTeX)
+  BASE_PDF_GENERATED --> POST_PROCESSED: Watermark / Flatten / Encrypt
+  POST_PROCESSED --> VERIFIED: 7-Check Verification
+  VERIFIED --> DELIVERED: Return JobResult
+  
+  VALIDATED --> FAILED
+  ASSET_RESOLVED --> FAILED
+  BASE_PDF_GENERATED --> FAILED
+  POST_PROCESSED --> FAILED
+  VERIFIED --> FAILED
 ```
 
 ---
@@ -332,6 +377,7 @@ Results are included in the `JobResult` and displayed in both the CLI and web UI
 **No data is stored.** Input JSON is processed in memory and discarded after the PDF is returned. No files are written to disk on the server. No user data is logged — only request IDs and byte sizes.
 
 **Security controls:**
+
 - File uploads: 10MB per-file limit, type allowlist (jpg/png/gif/pdf/txt)
 - Asset paths: traversal blocked, only relative paths allowed
 - LaTeX: sandboxed in temp directory, shell-escape disabled, 60s timeout
@@ -498,6 +544,7 @@ Three ready-to-use GitHub Actions are included:
 ## Roadmap
 
 ### Phase 1 — Hackathon (current)
+
 - [x] End-to-end PDF generation from JSON via both Foxit APIs
 - [x] Dual engine: Foxit Doc Gen API (default) + LaTeX/tectonic (advanced)
 - [x] Job Orchestrator state machine with per-step timings
@@ -517,6 +564,7 @@ Three ready-to-use GitHub Actions are included:
 - [x] Full test suite: 139 tests (unit + integration + golden)
 
 ### Phase 2 — Production Grade
+
 - [ ] **GitHub/Jira ingestion** — Pull release data directly from GitHub Releases API or Jira tickets
 - [ ] **Live preview** — Real-time PDF preview panel while editing input
 - [ ] **Async job queue** — Redis/Celery for concurrent generation
@@ -524,6 +572,7 @@ Three ready-to-use GitHub Actions are included:
 - [ ] **Custom template authoring** — Upload your own `.docx` or `.tex` templates
 
 ### Phase 3 — Platform
+
 - [ ] **AI-assisted input** — Summarize commit history into features/fixes using LLM
 - [ ] **Approval workflow** — Review and sign-off before PDF generation
 - [ ] **Multi-language** — Generate release notes in multiple languages
