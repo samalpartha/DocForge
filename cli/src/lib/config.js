@@ -5,7 +5,7 @@
  */
 
 const DEFAULTS = {
-  backendUrl: "http://localhost:8000",
+  backendUrl: "https://docforge-monolith-108816008638.us-central1.run.app",
 };
 
 export function getConfig() {

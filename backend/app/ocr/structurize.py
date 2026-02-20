@@ -32,10 +32,13 @@ class ExtractionResult:
     provider: str = "regex"  # Track if Gemini or regex was used
 
 
+# Improved version pattern to catch common version formats or even "Step X" as a fallback
 VERSION_PATTERN = re.compile(
-    r"(?:v(?:ersion)?[\s.:]*)?(\d+\.\d+(?:\.\d+)?(?:[-+][\w.]+)?)",
+    r"(?:v(?:ersion)?[\s.:]*)?(\d+(?:\.\d+)+(?:[-+][\w.]+)?)",
     re.IGNORECASE,
 )
+# Fallback version pattern for simpler formats like "v1" or "1.0"
+VERSION_PATTERN_SIMPLE = re.compile(r"v?(\d+\.\d+)", re.IGNORECASE)
 
 SECTION_PATTERNS = {
     "features": re.compile(
@@ -65,8 +68,9 @@ def _extract_product_name(text: str) -> str:
         if re.match(r"^(release\s+notes?|changelog|what'?s\s+new)", line, re.IGNORECASE):
             continue
         # Return first meaningful line
-        cleaned = re.sub(r"\s*[-—:]\s*release\s+notes?.*$", "", line, flags=re.IGNORECASE)
-        cleaned = re.sub(r"\s*v?\d+\.\d+.*$", "", cleaned).strip()
+        # Clean up: stop at "Step", "Release", "Notes", etc.
+        cleaned = re.split(r"[:—–-]\s*(?:release|notes|version|step)", line, flags=re.IGNORECASE)[0].strip()
+        cleaned = re.sub(r"\s*v?\d+.*$", "", cleaned).strip()
         if cleaned and len(cleaned) > 2:
             return cleaned
 
@@ -75,8 +79,21 @@ def _extract_product_name(text: str) -> str:
 
 def _extract_version(text: str) -> str:
     """Find the first version-like string."""
-    match = VERSION_PATTERN.search(text[:500])
-    return match.group(1) if match else ""
+    match = VERSION_PATTERN.search(text[:1000])
+    if match:
+        return match.group(1)
+    
+    # Try simple v1.2 etc
+    match_simple = VERSION_PATTERN_SIMPLE.search(text[:1000])
+    if match_simple:
+        return match_simple.group(1)
+        
+    # Look for "Step X" as version fallback
+    step_match = re.search(r"Step\s*(\d+)", text, re.IGNORECASE)
+    if step_match:
+        return f"Step {step_match.group(1)}"
+        
+    return ""
 
 
 def _extract_date(text: str) -> str:
@@ -237,7 +254,9 @@ def _gemini_structurize(text: str) -> Optional[dict]:
         if not response or not response.text:
             return None
 
-        return json.loads(response.text)
+        # Clean markdown if present
+        clean_text = response.text.replace("```json", "").replace("```", "").strip()
+        return json.loads(clean_text)
     except Exception as e:
         logger.error("  Gemini extraction failed: %s", str(e))
         return None

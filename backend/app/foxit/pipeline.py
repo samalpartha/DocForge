@@ -130,7 +130,13 @@ class JobOrchestrator:
 
         product = self.raw_data.get("product_name", "unknown")
         version = self.raw_data.get("version", "0.0.0")
-        filename = f"{product.lower().replace(' ', '-')}-v{version}-release-notes.pdf"
+        
+        # Sanitise product name for filename (ASCII only)
+        safe_product = product.lower().replace(" ", "-")
+        import re
+        safe_product = re.sub(r"[^a-z0-9\-_]", "", safe_product)
+        
+        filename = f"{safe_product}-v{version}-release-notes.pdf"
 
         total_ms = int((time.perf_counter() - pipeline_start) * 1000)
         logger.info("=" * 60)

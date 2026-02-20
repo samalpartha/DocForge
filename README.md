@@ -255,12 +255,12 @@ Output:
 ```mermaid
 graph TD
   subgraph Clients
-    CLI[CLI (Node.js)]
-    Web[Web UI]
-    CI[GitHub Actions]
+    CLI["CLI (Node.js)"]
+    Web["Web UI"]
+    CI["GitHub Actions"]
   end
 
-  subgraph Backend [Backend API (FastAPI)]
+  subgraph Backend ["Backend API (FastAPI)"]
     Validate[Validate]
     Assets[Resolve Assets]
     Gen[Generate PDF]
@@ -268,10 +268,10 @@ graph TD
     Verify[Verify]
   end
 
-  subgraph External [External Services]
-    FoxitDoc[Foxit Doc Gen API]
-    FoxitPDF[Foxit PDF Services API]
-    Tectonic[Tectonic (LaTeX)]
+  subgraph External ["External Services"]
+    FoxitDoc["Foxit Doc Gen API"]
+    FoxitPDF["Foxit PDF Services API"]
+    Tectonic["Tectonic (LaTeX)"]
   end
 
   CLI -->|POST /v1/generate| Backend
